@@ -18,7 +18,7 @@ async function configuredBucketName() {
       if (config.storageBucket) return config.storageBucket;
     }
   } catch {
-    // Fall through to deterministic StoryForge bucket name.
+    // Fall through.
   }
 
   return `${projectId}-storyforge-media`;
@@ -38,15 +38,16 @@ const getUrl =
 let response = await fetch(getUrl, { headers });
 
 if (response.ok) {
-  console.log(`StoryForge media bucket exists: ${bucketName}`);
+  console.log(`StoryForge media backend available: firebase-storage (${bucketName})`);
   process.exit(0);
 }
 
 if (response.status !== 404) {
   const details = await response.text();
-  throw new Error(
-    `Unable to inspect Storage bucket (${response.status}): ${details}`
+  console.log(
+    `Firebase Storage unavailable (${response.status}); StoryForge will use github media backend. ${details.slice(0, 400)}`
   );
+  process.exit(0);
 }
 
 const createUrl =
@@ -59,18 +60,14 @@ response = await fetch(createUrl, {
     name: bucketName,
     location,
     storageClass: 'STANDARD',
-    versioning: {
-      enabled: true
-    },
+    versioning: { enabled: true },
     lifecycle: {
       rule: [
         {
           action: { type: 'Delete' },
           condition: {
             age: 30,
-            matchesPrefix: [
-              `storyworlds/novasaga/drafts/`
-            ]
+            matchesPrefix: [`storyworlds/novasaga/drafts/`]
           }
         }
       ]
@@ -80,6 +77,17 @@ response = await fetch(createUrl, {
 
 if (!response.ok) {
   const details = await response.text();
+
+  if (
+    response.status === 403 &&
+    /billing account|billing/i.test(details)
+  ) {
+    console.log(
+      'Firebase Storage requires project billing; StoryForge will use github media backend until billing is enabled.'
+    );
+    process.exit(0);
+  }
+
   throw new Error(
     `Unable to create Storage bucket (${response.status}): ${details}`
   );

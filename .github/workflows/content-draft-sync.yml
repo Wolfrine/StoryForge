@@ -2,13 +2,12 @@ name: StoryForge Creator Draft Sync
 
 on:
   push:
-    branches:
-      - "content/**"
     paths:
       - "storyworld/authoring/packages/**"
 
 jobs:
   sync-drafts:
+    if: startsWith(github.ref_name, 'content/')
     runs-on: ubuntu-latest
 
     permissions:
@@ -40,7 +39,8 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
           FIREBASE_PROJECT_ID: lumio-forge
           STORYFORGE_WORLD_ID: novasaga
-          STORYFORGE_AGENT_ID: github:${{ github.actor }}
+          STORYFORGE_AGENT_ID: "github:${{ github.actor }}"
+          STORYFORGE_MEDIA_BACKEND: github
         run: |
           set -euo pipefail
 
