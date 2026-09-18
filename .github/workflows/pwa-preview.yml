@@ -1,0 +1,77 @@
+name: StoryForge PWA and Mobile Preview
+
+on:
+  push:
+    branches:
+      - pwa-content-v1
+  workflow_dispatch:
+
+jobs:
+  validate-preview:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install
+        run: npm install --no-audit --no-fund
+
+      - name: Validate and build PWA
+        run: |
+          npm run build
+          test -f dist/manifest.webmanifest
+          test -f dist/sw.js
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start preview
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/storyforge-preview.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173 >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/storyforge-preview.log
+          exit 1
+
+      - name: Mobile and PWA QA
+        run: node scripts/pwa-mobile-qa.mjs
+
+      - name: Upload one QA contact sheet
+        uses: actions/upload-artifact@v4
+        with:
+          name: storyforge-pwa-mobile-qa
+          path: qa-output/storyforge-pwa-mobile-qa.jpg
+          retention-days: 2
+          if-no-files-found: error
+
+      - name: Prepare Firebase credentials
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "${{ runner.temp }}/firebase-service-account.json"
+
+      - name: Deploy preview channel
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
+        run: |
+          npm install -g firebase-tools
+          firebase hosting:channel:deploy pwa-content-v1 \
+            --project lumio-forge \
+            --expires 5d \
+            --non-interactive
