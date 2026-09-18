@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0",
+  "id": "replace-with-stable-id",
+  "kind": "other",
+  "title": "Replace with title",
+  "summary": "One concise description used by the engine for discovery and fallback presentation.",
+  "entry": {
+    "priority": 0,
+    "featured": false,
+    "hidden": false
+  },
+  "theme": {
+    "palette": {
+      "background": "#f3efe7",
+      "foreground": "#263a47",
+      "surface": "#fffdf8",
+      "muted": "#71808a",
+      "accent": "#9a674e"
+    },
+    "typography": {
+      "tone": "editorial"
+    },
+    "motion": {
+      "pace": "slow"
+    },
+    "composition": {
+      "density": "airy",
+      "mediaWeight": "balanced"
+    }
+  },
+  "media": [],
+  "blocks": [
+    {
+      "id": "hero",
+      "type": "hero",
+      "title": "Replace with title",
+      "subtitle": "Optional first-layer line"
+    },
+    {
+      "id": "main-text",
+      "type": "prose",
+      "paragraphs": [
+        "Creator-written content goes here."
+      ]
+    },
+    {
+      "id": "connections",
+      "type": "relationships",
+      "heading": "Related threads"
+    }
+  ],
+  "relationships": [],
+  "tags": []
+}
