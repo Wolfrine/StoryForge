@@ -44,19 +44,29 @@ if (!ruleset.name) {
 }
 
 const releaseName = `projects/${projectId}/releases/cloud.firestore`;
-const releaseUrl =
-  `https://firebaserules.googleapis.com/v1/${releaseName}?updateMask=rulesetName`;
+const releaseResourceUrl =
+  `https://firebaserules.googleapis.com/v1/${releaseName}`;
 
-let releaseResponse = await fetch(releaseUrl, {
-  method: 'PATCH',
-  headers: authHeaders,
-  body: JSON.stringify({
-    name: releaseName,
-    rulesetName: ruleset.name
-  })
+const currentRelease = await fetch(releaseResourceUrl, {
+  method: 'GET',
+  headers: authHeaders
 });
 
-if (releaseResponse.status === 404) {
+let releaseResponse;
+
+if (currentRelease.ok) {
+  releaseResponse = await fetch(releaseResourceUrl, {
+    method: 'PATCH',
+    headers: authHeaders,
+    body: JSON.stringify({
+      release: {
+        name: releaseName,
+        rulesetName: ruleset.name
+      },
+      updateMask: 'rulesetName'
+    })
+  });
+} else if (currentRelease.status === 404) {
   releaseResponse = await fetch(
     `https://firebaserules.googleapis.com/v1/projects/${projectId}/releases`,
     {
@@ -67,6 +77,11 @@ if (releaseResponse.status === 404) {
         rulesetName: ruleset.name
       })
     }
+  );
+} else {
+  const details = await currentRelease.text();
+  throw new Error(
+    `Unable to inspect Firestore rules release (${currentRelease.status}): ${details}`
   );
 }
 
