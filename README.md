@@ -2,21 +2,24 @@
 
 StoryForge is a data-driven storyworld visualization and experience engine.
 
-It is intentionally not a hand-built encyclopedia and not a set of bespoke pages. Creator agents write structured world data; the engine decides how that data should be visualized and progressively experienced.
+It is intentionally not a hand-built encyclopedia and not a set of bespoke pages. Creator agents write structured world data; the engine decides how that data should be visualized and experienced.
 
-## Current status
+## Current status — v0.2
 
-v0.1 foundation:
-- React + TypeScript + Vite
-- generic entity renderer
-- relationship-aware composition
-- timeline and process visual modules
+The first dashboard-like prototype has been replaced by a world-first experience shell:
+
+- no permanent side navigation
+- semantic ambient visual generation
+- focal entity stage
+- relationships as spatial entry points
+- narrative, timeline and process fields
+- Atlas mode where the world graph itself is navigation
+- Studio mode layered onto the same experience
+- automatic integrity validation before every build
 - semantic theme resolver
-- reader depth controls
-- Studio-only meaning/provenance views
-- JSON schema contract
-- NovaSaga sample fixture
 - Firebase Hosting deployment through GitHub Actions
+
+No entity-specific pages are used.
 
 ## Architecture
 
@@ -27,11 +30,13 @@ Storyworld schema
     ↓
 World graph / normalized content
     ↓
-Visualization resolver
+Semantic + relationship resolution
     ↓
-Theme + experience resolvers
+Visual grammar
     ↓
-Generic rendering engine
+Experience grammar
+    ↓
+World / Atlas / Studio
 ```
 
 See `docs/ENGINE_V0.md` and `AGENTS.md`.
@@ -43,7 +48,7 @@ npm install
 npm run dev
 ```
 
-Production build:
+Validation and production build:
 
 ```bash
 npm run build
@@ -51,14 +56,12 @@ npm run build
 
 ## Deployment
 
-Pushes to `main` validate/build the application and deploy Firebase Hosting to project:
+Pushes to `main` validate/build the application and deploy Firebase Hosting to:
 
 ```text
 lumio-forge
 ```
 
-The GitHub repository secret `FIREBASE_SERVICE_ACCOUNT` must contain the Firebase service-account JSON.
-
 ## Content ownership
 
-The sample data in `storyworld/sample/world.json` demonstrates the engine contract. It is not intended to replace the canonical NovaSaga source repository.
+The sample data in `storyworld/sample/world.json` demonstrates the engine contract. It does not replace the canonical NovaSaga source repository.
