@@ -3,16 +3,46 @@ import { initializeAnalytics, track } from './analytics/analytics';
 import { StatsView } from './analytics/StatsView';
 import { PackageExperience } from './components/PackageExperience';
 import { WorldLanding } from './components/WorldLanding';
-import { world } from './content/world';
+import type { StoryWorldManifest } from './domain/story';
+import {
+  fallbackStoryWorld,
+  loadStoryWorld,
+  type ContentSource
+} from './content/repository';
 
 const statsMode =
   new URLSearchParams(window.location.search).get('stats') === '1';
 
 function App() {
+  const [world, setWorld] = useState<StoryWorldManifest>(
+    fallbackStoryWorld()
+  );
+  const [contentSource, setContentSource] =
+    useState<ContentSource>('snapshot');
+  const [contentReady, setContentReady] = useState(false);
   const [activePackageId, setActivePackageId] = useState<string | null>(null);
 
   useEffect(() => {
     initializeAnalytics();
+
+    let cancelled = false;
+
+    void loadStoryWorld().then((loaded) => {
+      if (cancelled) return;
+
+      setWorld(loaded.world);
+      setContentSource(loaded.source);
+      setContentReady(true);
+
+      track('content_source_ready', {
+        content_source: loaded.source,
+        package_count: loaded.world.packages.length
+      });
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const activePackage = useMemo(
@@ -20,11 +50,23 @@ function App() {
       activePackageId
         ? world.packages.find((pkg) => pkg.id === activePackageId) ?? null
         : null,
-    [activePackageId]
+    [activePackageId, world]
   );
 
   if (statsMode) {
     return <StatsView />;
+  }
+
+  if (!contentReady) {
+    return (
+      <main className="sf-loading">
+        <div>
+          <span>StoryForge</span>
+          <strong>{world.title}</strong>
+          <i />
+        </div>
+      </main>
+    );
   }
 
   if (!activePackage) {
@@ -32,6 +74,7 @@ function App() {
       <WorldLanding
         world={world}
         onOpenPackage={(id) => setActivePackageId(id)}
+        contentSource={contentSource}
       />
     );
   }

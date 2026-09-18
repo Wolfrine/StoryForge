@@ -1,6 +1,6 @@
 {
   "name": "storyforge",
-  "version": "1.2.0",
+  "version": "1.2.0-alpha.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,10 +10,15 @@
     "build": "npm run validate:world && npm run compile:world && tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "npm run validate:world && npm run compile:world && npm run typecheck"
+    "test": "npm run validate:world && npm run compile:world && npm run typecheck",
+    "content:admin": "node scripts/content-admin.mjs",
+    "content:seed": "node scripts/content-admin.mjs seed",
+    "content:list": "node scripts/content-admin.mjs list",
+    "content:pull": "node scripts/content-admin.mjs pull"
   },
   "dependencies": {
     "ajv": "^8.17.1",
+    "firebase": "^12.19.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
@@ -21,6 +26,7 @@
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^4.4.1",
+    "firebase-admin": "^14.4.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
     "vite-plugin-pwa": "^1.3.0"

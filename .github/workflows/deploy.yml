@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Install dependencies
         run: npm install --no-audit --no-fund
@@ -64,6 +64,9 @@ jobs:
 
           firebase deploy --project "$FIREBASE_PROJECT_ID" --only hosting --non-interactive
 
+
+      - name: Verify public Firestore runtime
+        run: node scripts/firestore-public-smoke.mjs
 
       - name: Report Firebase Analytics availability
         continue-on-error: true
