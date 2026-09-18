@@ -26,6 +26,12 @@ export interface ThemeTokens {
   border: string;
   accent: string;
   accentSoft: string;
+  skyTop: string;
+  skyBottom: string;
+  sceneA: string;
+  sceneB: string;
+  sceneC: string;
+  glow: string;
 }
 
 export interface RenderContext {
