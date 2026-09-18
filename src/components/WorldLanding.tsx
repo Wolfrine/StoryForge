@@ -1,6 +1,11 @@
+import { useEffect } from 'react';
 import type { CSSProperties } from 'react';
 import type { StoryPackage, StoryWorldManifest } from '../domain/story';
-import { resolveEntryDirections } from '../engine/entryResolver';
+import { track } from '../analytics/analytics';
+import {
+  packageEntryScore,
+  resolveEntryDirections
+} from '../engine/entryResolver';
 import { themeToStyle } from '../engine/themeRuntime';
 
 interface Props {
@@ -19,6 +24,14 @@ function positionFor(index: number, total: number) {
 export function WorldLanding({ world, onOpenPackage }: Props) {
   const directions = resolveEntryDirections(world);
   const style = themeToStyle(world.theme);
+
+  useEffect(() => {
+    track('landing_view', {
+      world_id: world.id,
+      direction_count: directions.length,
+      direction_ids: directions.map((pkg) => pkg.id).join(',')
+    });
+  }, [world.id]);
 
   return (
     <main className="sf-landing" style={style}>
@@ -48,8 +61,17 @@ export function WorldLanding({ world, onOpenPackage }: Props) {
             <DirectionNode
               key={pkg.id}
               pkg={pkg}
+              rank={index + 1}
               style={nodeStyle}
-              onOpen={() => onOpenPackage(pkg.id)}
+              onOpen={() => {
+                track('entry_open', {
+                  package_id: pkg.id,
+                  package_kind: pkg.kind,
+                  entry_rank: index + 1,
+                  entry_score: Number(packageEntryScore(pkg).toFixed(2))
+                });
+                onOpenPackage(pkg.id);
+              }}
             />
           );
         })}
@@ -65,15 +87,23 @@ export function WorldLanding({ world, onOpenPackage }: Props) {
 
 function DirectionNode({
   pkg,
+  rank,
   style,
   onOpen
 }: {
   pkg: StoryPackage;
+  rank: number;
   style: CSSProperties;
   onOpen: () => void;
 }) {
   return (
-    <button className="sf-direction" type="button" style={style} onClick={onOpen}>
+    <button
+      className="sf-direction"
+      type="button"
+      style={style}
+      onClick={onOpen}
+      data-entry-rank={rank}
+    >
       <span>{pkg.kind}</span>
       <strong>{pkg.title}</strong>
       <small>{pkg.summary}</small>

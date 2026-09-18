@@ -805,3 +805,228 @@ a:focus-visible {
     transition-duration: .01ms !important;
   }
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Local usage analytics inspector                                             */
+/* -------------------------------------------------------------------------- */
+
+.sf-stats {
+  min-height: 100vh;
+  padding: clamp(28px, 5vw, 72px);
+  color: #263a47;
+  background:
+    radial-gradient(circle at 84% 8%, rgba(154, 103, 78, .08), transparent 28rem),
+    #f3efe7;
+}
+
+.sf-stats-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 32px;
+  align-items: end;
+  max-width: 1320px;
+  margin: 0 auto 44px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(38, 58, 71, .13);
+}
+
+.sf-stats-header > div:first-child > span,
+.sf-stats-section-title > span {
+  color: #9a674e;
+  font-size: 8px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.sf-stats-header h1 {
+  max-width: 760px;
+  margin: 10px 0 10px;
+  font-family: Iowan Old Style, Baskerville, Georgia, serif;
+  font-size: clamp(42px, 6vw, 82px);
+  font-weight: 400;
+  line-height: .92;
+  letter-spacing: -.05em;
+}
+
+.sf-stats-header p,
+.sf-stats-section-title p {
+  max-width: 650px;
+  margin: 0;
+  color: #71808a;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.sf-stats-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.sf-stats-actions button,
+.sf-stats-actions a {
+  border: 1px solid rgba(38, 58, 71, .16);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, .72);
+  color: #344c5b;
+  padding: 9px 13px;
+  text-decoration: none;
+  font-size: 8px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.sf-stats-kpis {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.sf-stats-kpis article {
+  min-height: 120px;
+  padding: 18px;
+  border: 1px solid rgba(38, 58, 71, .10);
+  border-radius: 18px;
+  background: rgba(255, 253, 248, .66);
+}
+
+.sf-stats-kpis span {
+  display: block;
+  color: #71808a;
+  font-size: 8px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.sf-stats-kpis strong {
+  display: block;
+  margin-top: 24px;
+  font-family: Iowan Old Style, Baskerville, Georgia, serif;
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.sf-stats-status {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 12px !important;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.sf-stats-section {
+  max-width: 1320px;
+  margin: 70px auto 0;
+}
+
+.sf-stats-section-title {
+  display: grid;
+  grid-template-columns: minmax(160px, .35fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+
+.sf-stats-table {
+  border-top: 1px solid rgba(38, 58, 71, .14);
+}
+
+.sf-stats-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.5fr) repeat(5, minmax(70px, .45fr));
+  gap: 12px;
+  align-items: center;
+  min-height: 62px;
+  border-bottom: 1px solid rgba(38, 58, 71, .10);
+  font-size: 11px;
+}
+
+.sf-stats-row strong {
+  font-family: Iowan Old Style, Baskerville, Georgia, serif;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.sf-stats-row-head {
+  min-height: 44px;
+  color: #71808a;
+  font-size: 8px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.sf-stats-empty {
+  padding: 28px 0;
+  color: #71808a;
+  font-size: 12px;
+}
+
+.sf-stats-blocks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.sf-stats-blocks article {
+  min-height: 110px;
+  padding: 16px;
+  border: 1px solid rgba(38, 58, 71, .10);
+  border-radius: 16px;
+  background: rgba(255, 253, 248, .66);
+}
+
+.sf-stats-blocks article span {
+  color: #71808a;
+  font-size: 8px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.sf-stats-blocks article strong {
+  display: block;
+  margin-top: 22px;
+  font-family: Iowan Old Style, Baskerville, Georgia, serif;
+  font-size: 30px;
+  font-weight: 400;
+}
+
+@media (max-width: 1000px) {
+  .sf-stats-kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .sf-stats {
+    padding: 22px 16px 60px;
+  }
+
+  .sf-stats-header {
+    grid-template-columns: 1fr;
+  }
+
+  .sf-stats-actions {
+    justify-content: flex-start;
+  }
+
+  .sf-stats-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sf-stats-section-title {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .sf-stats-table {
+    overflow-x: auto;
+  }
+
+  .sf-stats-row {
+    min-width: 720px;
+  }
+}

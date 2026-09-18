@@ -60,3 +60,26 @@ jobs:
           fi
 
           firebase deploy --project "$FIREBASE_PROJECT_ID" --only hosting --non-interactive
+
+
+      - name: Report Firebase Analytics availability
+        continue-on-error: true
+        run: |
+          node <<'NODE'
+          const url = 'https://lumio-forge.web.app/__/firebase/init.json';
+          try {
+            const response = await fetch(url, { cache: 'no-store' });
+            if (!response.ok) {
+              console.log('StoryForge analytics backend: Firebase init config unavailable; local analytics remains active.');
+              process.exit(0);
+            }
+            const config = await response.json();
+            console.log(
+              config.measurementId
+                ? 'StoryForge analytics backend: Firebase/Google Analytics configured.'
+                : 'StoryForge analytics backend: no GA measurement ID; local analytics remains active.'
+            );
+          } catch {
+            console.log('StoryForge analytics backend: status check failed; local analytics remains active.');
+          }
+          NODE

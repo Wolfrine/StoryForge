@@ -1,4 +1,10 @@
-import type { StoryBlock, StoryPackage, StoryWorldManifest, MediaAsset } from '../domain/story';
+import type {
+  StoryBlock,
+  StoryPackage,
+  StoryWorldManifest,
+  MediaAsset
+} from '../domain/story';
+import { track } from '../analytics/analytics';
 
 interface BlockRendererProps {
   block: StoryBlock;
@@ -157,7 +163,9 @@ export function BlockRenderer({
 
   const links = (pkg.relationships ?? [])
     .map((relationship) => {
-      const target = world.packages.find((candidate) => candidate.id === relationship.targetId);
+      const target = world.packages.find(
+        (candidate) => candidate.id === relationship.targetId
+      );
       return target ? { relationship, target } : null;
     })
     .filter((value) => value !== null);
@@ -172,7 +180,16 @@ export function BlockRenderer({
           <button
             type="button"
             key={relationship.id}
-            onClick={() => onOpenPackage(target.id)}
+            onClick={() => {
+              track('relationship_open', {
+                package_id: pkg.id,
+                package_kind: pkg.kind,
+                target_id: target.id,
+                target_kind: target.kind,
+                relationship_label: relationship.label
+              });
+              onOpenPackage(target.id);
+            }}
           >
             <span>{relationship.label}</span>
             <strong>{target.title}</strong>
