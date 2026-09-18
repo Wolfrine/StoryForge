@@ -66,3 +66,11 @@ jobs:
           STORYFORGE_WORLD_ID: novasaga
           STORYFORGE_AGENT_ID: initial-firestore-migration
         run: npm run content:seed
+
+      - name: Verify published content
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
+          FIREBASE_PROJECT_ID: lumio-forge
+          STORYFORGE_WORLD_ID: novasaga
+          STORYFORGE_AGENT_ID: infrastructure-verification
+        run: npm run content:list
