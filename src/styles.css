@@ -1380,3 +1380,342 @@ a:focus-visible {
     grid-auto-columns: minmax(210px, 78vw);
   }
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* PWA shell + mobile composition                                              */
+/* -------------------------------------------------------------------------- */
+
+html,
+body,
+#root {
+  min-height: 100%;
+  min-height: 100dvh;
+}
+
+body {
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+.sf-loading {
+  width: 100%;
+  height: 100svh;
+  display: grid;
+  place-items: center;
+  color: #263a47;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(154, 103, 78, .09), transparent 22rem),
+    #f3efe7;
+}
+
+.sf-loading > div {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.sf-loading span {
+  color: #9a674e;
+  font-size: 8px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+.sf-loading strong {
+  font-family: Iowan Old Style, Baskerville, Georgia, serif;
+  font-size: clamp(34px, 8vw, 58px);
+  font-weight: 400;
+}
+
+.sf-loading i {
+  display: block;
+  width: 82px;
+  height: 1px;
+  margin-top: 16px;
+  background: linear-gradient(90deg, transparent, #9a674e, transparent);
+  animation: sf-loading-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes sf-loading-pulse {
+  0%, 100% { opacity: .25; transform: scaleX(.7); }
+  50% { opacity: 1; transform: scaleX(1); }
+}
+
+.sf-landing {
+  padding:
+    env(safe-area-inset-top)
+    env(safe-area-inset-right)
+    env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+
+.sf-experience-chrome {
+  padding-top: calc(16px + env(safe-area-inset-top));
+  padding-left: max(clamp(18px, 4vw, 56px), env(safe-area-inset-left));
+  padding-right: max(clamp(18px, 4vw, 56px), env(safe-area-inset-right));
+}
+
+.sf-direction {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.sf-experience {
+  min-height: 100dvh;
+}
+
+.sf-composition {
+  padding-left: max(clamp(18px, 5vw, 78px), env(safe-area-inset-left));
+  padding-right: max(clamp(18px, 5vw, 78px), env(safe-area-inset-right));
+  padding-bottom: max(clamp(100px, 12vw, 180px), calc(36px + env(safe-area-inset-bottom)));
+}
+
+@media (max-width: 600px) {
+  .sf-direction {
+    left: var(--node-mobile-left);
+    top: var(--node-mobile-top);
+    width: 100px;
+    padding: 6px;
+  }
+
+  .sf-direction::before {
+    width: 7px;
+    height: 7px;
+    margin-bottom: 7px;
+  }
+
+  .sf-direction strong {
+    font-size: 13px;
+  }
+
+  .sf-direction span {
+    font-size: 5.8px;
+  }
+
+  .sf-center {
+    width: 190px;
+    min-width: 190px;
+    padding: 22px;
+  }
+
+  .sf-center h1 {
+    font-size: 36px;
+  }
+
+  .sf-center p {
+    max-width: 150px;
+    font-size: 9px;
+    line-height: 1.45;
+  }
+
+  .sf-center small {
+    max-width: 130px;
+    margin-top: 12px;
+    font-size: 5.5px;
+  }
+
+  .sf-landing-ambient i:nth-child(1) {
+    width: 66vw;
+  }
+
+  .sf-landing-ambient i:nth-child(2) {
+    width: 108vw;
+  }
+
+  .sf-landing-ambient i:nth-child(3) {
+    width: 148vw;
+  }
+
+  .sf-experience-chrome {
+    min-height: 54px;
+    padding-bottom: 12px;
+  }
+
+  .sf-experience-chrome button {
+    min-height: 34px;
+    font-size: 8px;
+  }
+
+  .sf-composition {
+    display: block;
+    padding-top: 18px;
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+  }
+
+  .sf-composed + .sf-composed {
+    margin-top: 54px;
+  }
+
+  .sf-width-full,
+  .sf-width-wide,
+  .sf-width-medium,
+  .sf-width-narrow {
+    width: auto;
+    margin-left: 0;
+  }
+
+  .sf-hero-block {
+    min-height: min(72svh, 610px);
+    border-radius: 18px;
+  }
+
+  .sf-hero-copy {
+    width: 100%;
+    padding: 26px 20px;
+  }
+
+  .sf-hero-copy h1 {
+    font-size: clamp(44px, 14vw, 64px);
+  }
+
+  .sf-hero-copy p {
+    max-width: 95%;
+    font-size: 17px;
+  }
+
+  .sf-prose-block {
+    display: block;
+  }
+
+  .sf-prose-block h2 {
+    margin-bottom: 18px;
+  }
+
+  .sf-prose-block > div p {
+    font-size: 20px;
+    line-height: 1.52;
+  }
+
+  .sf-quote-block {
+    padding: 44px 8px;
+  }
+
+  .sf-quote-block p {
+    font-size: clamp(28px, 9vw, 42px);
+  }
+
+  .sf-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .sf-gallery .sf-asset {
+    aspect-ratio: 4 / 3;
+  }
+
+  .sf-process {
+    grid-template-columns: 1fr;
+  }
+
+  .sf-process article {
+    min-height: 190px;
+  }
+
+  .sf-process article > span {
+    margin-bottom: 38px;
+  }
+
+  .sf-timeline-block li {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .sf-relationship-list button {
+    min-height: 74px;
+    grid-template-columns: 78px minmax(0, 1fr) 20px;
+    gap: 9px;
+  }
+
+  .sf-relationship-list button strong {
+    font-size: 20px;
+  }
+
+  .sf-relationship-list button small {
+    display: none;
+  }
+
+  .sf-relationship-list button i {
+    grid-column: 3;
+  }
+
+  .sf-annotated-media > .sf-asset {
+    min-height: 240px;
+  }
+
+  .sf-graph {
+    min-width: 620px;
+  }
+
+  .sf-stats {
+    padding-top: calc(18px + env(safe-area-inset-top));
+    padding-bottom: calc(50px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 380px) {
+  .sf-center {
+    width: 170px;
+    min-width: 170px;
+  }
+
+  .sf-center h1 {
+    font-size: 32px;
+  }
+
+  .sf-direction {
+    width: 88px;
+  }
+
+  .sf-direction strong {
+    font-size: 12px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .sf-center {
+    width: 145px;
+    min-width: 145px;
+    padding: 18px;
+  }
+
+  .sf-center h1 {
+    font-size: 28px;
+  }
+
+  .sf-center p,
+  .sf-center small {
+    display: none;
+  }
+
+  .sf-direction {
+    width: 92px;
+  }
+
+  .sf-direction strong {
+    font-size: 12px;
+  }
+
+  .sf-landing-footer {
+    display: none;
+  }
+
+  .sf-hero-block {
+    min-height: 82svh;
+  }
+}
+
+@media (display-mode: standalone) {
+  .sf-landing-footer {
+    bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+
+  .sf-experience-chrome {
+    padding-top: calc(10px + env(safe-area-inset-top));
+  }
+}

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="120" fill="#f3efe7"/>
+  <circle cx="256" cy="256" r="198" fill="none" stroke="#c8b6aa" stroke-width="3"/>
+  <circle cx="256" cy="256" r="158" fill="none" stroke="#d7c8be" stroke-width="3"/>
+  <circle cx="256" cy="256" r="112" fill="none" stroke="#e4d8cf" stroke-width="3"/>
+  <circle cx="256" cy="256" r="62" fill="#9a674e"/>
+  <text x="256" y="274" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="44" fill="#fffaf5">SF</text>
+  <g fill="#71808a">
+    <circle cx="256" cy="62" r="9"/>
+    <circle cx="419" cy="179" r="9"/>
+    <circle cx="384" cy="399" r="9"/>
+    <circle cx="112" cy="369" r="9"/>
+    <circle cx="87" cy="174" r="9"/>
+  </g>
+</svg>

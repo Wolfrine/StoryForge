@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import type { CSSProperties } from 'react';
 import type { StoryPackage, StoryWorldManifest } from '../domain/story';
+import type { ContentSource } from '../content/repository';
 import { track } from '../analytics/analytics';
 import {
   packageEntryScore,
@@ -10,6 +11,7 @@ import { themeToStyle } from '../engine/themeRuntime';
 
 interface Props {
   world: StoryWorldManifest;
+  contentSource: ContentSource;
   onOpenPackage: (id: string) => void;
 }
 
@@ -17,21 +19,28 @@ function positionFor(index: number, total: number) {
   const angle = -Math.PI / 2 + (Math.PI * 2 * index) / total;
   return {
     left: 50 + Math.cos(angle) * 34,
-    top: 50 + Math.sin(angle) * 31
+    top: 50 + Math.sin(angle) * 31,
+    mobileLeft: 50 + Math.cos(angle) * 38,
+    mobileTop: 50 + Math.sin(angle) * 37
   };
 }
 
-export function WorldLanding({ world, onOpenPackage }: Props) {
+export function WorldLanding({
+  world,
+  contentSource,
+  onOpenPackage
+}: Props) {
   const directions = resolveEntryDirections(world);
   const style = themeToStyle(world.theme);
 
   useEffect(() => {
     track('landing_view', {
       world_id: world.id,
+      content_source: contentSource,
       direction_count: directions.length,
       direction_ids: directions.map((pkg) => pkg.id).join(',')
     });
-  }, [world.id]);
+  }, [world.id, contentSource]);
 
   return (
     <main className="sf-landing" style={style}>
@@ -54,6 +63,8 @@ export function WorldLanding({ world, onOpenPackage }: Props) {
           const nodeStyle = {
             '--node-left': `${pos.left}%`,
             '--node-top': `${pos.top}%`,
+            '--node-mobile-left': `${pos.mobileLeft}%`,
+            '--node-mobile-top': `${pos.mobileTop}%`,
             '--entry-index': index
           } as CSSProperties;
 
@@ -67,6 +78,7 @@ export function WorldLanding({ world, onOpenPackage }: Props) {
                 track('entry_open', {
                   package_id: pkg.id,
                   package_kind: pkg.kind,
+                  content_source: contentSource,
                   entry_rank: index + 1,
                   entry_score: Number(packageEntryScore(pkg).toFixed(2))
                 });
@@ -79,7 +91,7 @@ export function WorldLanding({ world, onOpenPackage }: Props) {
 
       <div className="sf-landing-footer">
         <span>ENTRY RESOLVER v1</span>
-        <span>content chooses the directions</span>
+        <span>{contentSource === 'firestore' ? 'live content' : 'offline snapshot'}</span>
       </div>
     </main>
   );

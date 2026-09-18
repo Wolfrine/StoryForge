@@ -1,5 +1,6 @@
 export type AnalyticsEventName =
   | 'session_start'
+  | 'content_source_ready'
   | 'landing_view'
   | 'entry_open'
   | 'package_view'
