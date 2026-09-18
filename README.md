@@ -1,4 +1,64 @@
 # StoryForge
 
+StoryForge is a data-driven storyworld visualization and experience engine.
 
-https://chatgpt.com/backend-api/estuary/content?id=6ea38126b93de326eab836c3b495362219b8f63c5bb7d46fe477aba971e0ca94-2026-03-10-04-46-50-461ebc501d3c4f2f844a15b0aa502f96.zip&ts=492556&p=de&cid=2&sig=34f5a4da78c4db03c662afe9f22ac8b19b13f0ef9ce03c4a99a5a34271b2286c&v=0
+It is intentionally not a hand-built encyclopedia and not a set of bespoke pages. Creator agents write structured world data; the engine decides how that data should be visualized and progressively experienced.
+
+## Current status
+
+v0.1 foundation:
+- React + TypeScript + Vite
+- generic entity renderer
+- relationship-aware composition
+- timeline and process visual modules
+- semantic theme resolver
+- reader depth controls
+- Studio-only meaning/provenance views
+- JSON schema contract
+- NovaSaga sample fixture
+- Firebase Hosting deployment through GitHub Actions
+
+## Architecture
+
+```text
+Creator agents
+    ↓
+Storyworld schema
+    ↓
+World graph / normalized content
+    ↓
+Visualization resolver
+    ↓
+Theme + experience resolvers
+    ↓
+Generic rendering engine
+```
+
+See `docs/ENGINE_V0.md` and `AGENTS.md`.
+
+## Local development
+
+```bash
+npm install
+npm run dev
+```
+
+Production build:
+
+```bash
+npm run build
+```
+
+## Deployment
+
+Pushes to `main` validate/build the application and deploy Firebase Hosting to project:
+
+```text
+lumio-forge
+```
+
+The GitHub repository secret `FIREBASE_SERVICE_ACCOUNT` must contain the Firebase service-account JSON.
+
+## Content ownership
+
+The sample data in `storyworld/sample/world.json` demonstrates the engine contract. It is not intended to replace the canonical NovaSaga source repository.

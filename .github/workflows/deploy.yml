@@ -1,0 +1,62 @@
+name: Validate, Build and Deploy StoryForge
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: storyforge-production
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Validate and build
+        run: npm run build
+
+      - name: Prepare Firebase credentials
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          set -euo pipefail
+          if [ -z "$FIREBASE_SERVICE_ACCOUNT_JSON" ]; then
+            echo "FIREBASE_SERVICE_ACCOUNT is missing."
+            exit 1
+          fi
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "${{ runner.temp }}/firebase-service-account.json"
+
+      - name: Deploy to Firebase Hosting
+        env:
+          FIREBASE_PROJECT_ID: lumio-forge
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
+        run: |
+          set -euo pipefail
+          npm install -g firebase-tools
+          firebase --version
+
+          if firebase hosting:sites:get "$FIREBASE_PROJECT_ID" --project "$FIREBASE_PROJECT_ID" --non-interactive >/dev/null 2>&1; then
+            echo "Hosting site $FIREBASE_PROJECT_ID already exists."
+          else
+            echo "Creating Hosting site $FIREBASE_PROJECT_ID..."
+            firebase hosting:sites:create "$FIREBASE_PROJECT_ID" --project "$FIREBASE_PROJECT_ID" --non-interactive
+          fi
+
+          firebase deploy --project "$FIREBASE_PROJECT_ID" --only hosting --non-interactive

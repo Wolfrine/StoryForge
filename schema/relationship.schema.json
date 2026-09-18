@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://storyforge.local/schema/relationship.schema.json",
+  "title": "StoryForge Relationship",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "sourceId", "targetId", "type", "label"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "sourceId": { "type": "string" },
+    "targetId": { "type": "string" },
+    "type": { "type": "string" },
+    "label": { "type": "string" },
+    "description": { "type": "string" },
+    "strength": { "enum": ["weak", "normal", "strong"] }
+  }
+}

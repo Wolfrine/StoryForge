@@ -1,0 +1,399 @@
+{
+  "id": "novasaga-sample",
+  "name": "NovaSaga",
+  "version": "0.1.0",
+  "entities": [
+    {
+      "id": "luminaries",
+      "kind": "faction",
+      "name": "The Luminaries",
+      "subtitle": "A hidden tradition concerned with balance rather than rule.",
+      "status": "canon",
+      "summary": "An ancient lineage that treats power as disciplined relation between consciousness, emotion, environment and matter.",
+      "body": [
+        "Luminaries do not define themselves through spectacle. Their central discipline is restraint: observe first, understand the field, and intervene only when the action preserves agency rather than replacing it.",
+        "Their hidden settlements, outposts and cultural practices exist to sustain knowledge that can become dangerous when stripped of responsibility."
+      ],
+      "tags": ["balance", "restraint", "hidden order"],
+      "visual": {
+        "atmosphere": "mysterious",
+        "luminosity": "dark",
+        "density": "spacious",
+        "motion": "gentle",
+        "materiality": "natural"
+      },
+      "meaning": {
+        "tensions": ["power vs restraint", "guidance vs control"],
+        "desiredFeelings": ["curiosity", "trust", "awe without worship"],
+        "realization": "Greater capability increases responsibility rather than entitlement.",
+        "explicit": false
+      },
+      "sourceRefs": [
+        {
+          "id": "lum-source-1",
+          "label": "Luminary Codex · Origin & Nature",
+          "kind": "notion",
+          "note": "Canonical March 2026 source."
+        },
+        {
+          "id": "lum-source-2",
+          "label": "NovaSaga wiki · Factions",
+          "kind": "github",
+          "note": "Post-reset active record."
+        }
+      ]
+    },
+    {
+      "id": "silent-proving",
+      "kind": "concept",
+      "name": "The Silent Proving",
+      "subtitle": "Worthiness observed in an ordinary life.",
+      "status": "canon",
+      "summary": "A Luminary child grows up without knowledge of their lineage. Character is observed through genuine choices, not manufactured tests.",
+      "body": [
+        "The Proving is deliberately invisible to the child. School, friendships, mistakes and difficulties must remain real because a staged test would only measure performance.",
+        "Only after readiness is established does the hidden lineage become known."
+      ],
+      "process": [
+        {
+          "id": "birth",
+          "title": "Birth into a Luminary family",
+          "summary": "The family carries knowledge the child is not allowed to inherit automatically."
+        },
+        {
+          "id": "exile",
+          "title": "Ordinary life",
+          "summary": "The family lives among ordinary humans and the child grows without privilege."
+        },
+        {
+          "id": "observation",
+          "title": "Silent observation",
+          "summary": "Natural decisions reveal intent, values and maturity."
+        },
+        {
+          "id": "return",
+          "title": "Return — or permanent exile",
+          "summary": "Lineage is revealed only when the person is genuinely ready."
+        }
+      ],
+      "tags": ["selection", "character", "agency"],
+      "visual": {
+        "atmosphere": "austere",
+        "luminosity": "dark",
+        "density": "balanced",
+        "motion": "still",
+        "materiality": "architectural"
+      },
+      "meaning": {
+        "tensions": ["inheritance vs earned character", "love vs duty"],
+        "desiredFeelings": ["unease", "respect", "reflection"],
+        "realization": "Being born near power does not make someone worthy of it.",
+        "explicit": false
+      },
+      "sourceRefs": [
+        {
+          "id": "proving-source-1",
+          "label": "Luminary Codex · The Silent Proving",
+          "kind": "notion",
+          "note": "Canonical source."
+        }
+      ]
+    },
+    {
+      "id": "cessation",
+      "kind": "event",
+      "name": "The Cessation",
+      "subtitle": "The day engineered electrical civilization stopped.",
+      "status": "canon",
+      "summary": "A celestial disturbance disrupts engineered electrical conduction globally while biological electrochemistry continues. Dark Beings amplify the collapse.",
+      "body": [
+        "The Cessation is not meant to function as a convenient story reset. It is a systems failure whose consequences spread through water, food, hospitals, communication, transport and public trust.",
+        "The hidden world does not become obvious. Instead, physical collapse and weakened boundaries make reality more ambiguous precisely when people have the least capacity to interpret it."
+      ],
+      "timeline": [
+        {
+          "id": "celestial",
+          "title": "Celestial disturbance begins",
+          "order": 1,
+          "summary": "Multiple extreme space-weather conditions converge."
+        },
+        {
+          "id": "conduction",
+          "title": "Engineered conduction fails",
+          "order": 2,
+          "summary": "Grids, electronics, batteries and communications become unusable."
+        },
+        {
+          "id": "amplification",
+          "title": "Dark Being amplification",
+          "order": 3,
+          "summary": "Fear and disorder deepen the failure's human consequences."
+        },
+        {
+          "id": "adaptation",
+          "title": "Local adaptation",
+          "order": 4,
+          "summary": "Communities reorganize around water, food, trust and practical knowledge."
+        }
+      ],
+      "tags": ["world event", "collapse", "ambiguity"],
+      "visual": {
+        "atmosphere": "tense",
+        "luminosity": "dark",
+        "density": "balanced",
+        "motion": "active",
+        "materiality": "industrial"
+      },
+      "meaning": {
+        "tensions": ["dependence vs capability", "panic vs cooperation"],
+        "desiredFeelings": ["disorientation", "scale", "human vulnerability"],
+        "realization": "When scaffolding disappears, character and local capability become visible.",
+        "explicit": false
+      },
+      "sourceRefs": [
+        {
+          "id": "cess-source-1",
+          "label": "Luminary Codex · The Cessation of Electricity",
+          "kind": "notion",
+          "note": "Canonical mechanism."
+        },
+        {
+          "id": "cess-source-2",
+          "label": "NovaSaga raw · Event Probability and Companion Insulation",
+          "kind": "github",
+          "note": "Later systems-oriented refinement."
+        }
+      ]
+    },
+    {
+      "id": "dark-beings",
+      "kind": "faction",
+      "name": "Dark Beings",
+      "subtitle": "Corruption as unresolved intent rather than a separate species.",
+      "status": "canon",
+      "summary": "Humans transformed by accumulated grief, rage, obsession or despair; they grow through negative feedback loops and cannot be meaningfully resolved by simple destruction.",
+      "body": [
+        "A Dark Being amplifies what is already present in people and places. Fear becomes easier to sustain, despair becomes environmental, and conflict feeds the next conflict.",
+        "The Luminary answer is restoration where possible: weaken the feeding loop, bind safely, and attempt to recover the human underneath."
+      ],
+      "tags": ["adversary", "corruption", "restoration"],
+      "visual": {
+        "atmosphere": "tense",
+        "luminosity": "dark",
+        "density": "dense",
+        "motion": "active",
+        "materiality": "ethereal"
+      },
+      "meaning": {
+        "tensions": ["justice vs restoration", "victim vs threat"],
+        "desiredFeelings": ["fear", "pity", "moral discomfort"],
+        "realization": "Destroying a carrier does not necessarily resolve the cause.",
+        "explicit": false
+      },
+      "sourceRefs": [
+        {
+          "id": "dark-source-1",
+          "label": "Luminary Codex · Dark Beings",
+          "kind": "notion",
+          "note": "Canonical source."
+        }
+      ]
+    },
+    {
+      "id": "sunset-moonland",
+      "kind": "place",
+      "name": "Sunset Moonland",
+      "subtitle": "A place where exhausted travelers can begin to belong again.",
+      "status": "developing",
+      "summary": "A post-Cessation community built beside water, shaped across several eras by exile, rediscovery and the arrival of people looking for somewhere that can still hold them.",
+      "body": [
+        "Sunset Moonland is not meant to work because it has no problems. Its importance comes from a social fabric where the personal still reaches the system.",
+        "For Lucas and Teo, it becomes less a destination than an answer to two different forms of exhaustion."
+      ],
+      "timeline": [
+        {
+          "id": "sm-luminary",
+          "title": "The exiled Luminary child",
+          "order": 1,
+          "dateLabel": "≈ 500 years before the Cessation",
+          "summary": "An unworthy child withdraws to the land, stabilizes over decades, and is eventually welcomed back."
+        },
+        {
+          "id": "sm-fisherman",
+          "title": "The fisherman",
+          "order": 2,
+          "dateLabel": "Pre-Cessation",
+          "summary": "A storm leads a fisherman to the place; he later returns with his wife."
+        },
+        {
+          "id": "sm-community",
+          "title": "The community grows",
+          "order": 3,
+          "dateLabel": "Post-Cessation",
+          "summary": "Travelers arrive and an organic settlement develops."
+        },
+        {
+          "id": "sm-lucas-teo",
+          "title": "Lucas and Teo arrive",
+          "order": 4,
+          "dateLabel": "Months after the Cessation",
+          "summary": "Their attempt to return home changes when they encounter the settlement."
+        }
+      ],
+      "tags": ["community", "water", "belonging"],
+      "visual": {
+        "atmosphere": "warm",
+        "luminosity": "bright",
+        "density": "spacious",
+        "motion": "gentle",
+        "materiality": "natural"
+      },
+      "meaning": {
+        "tensions": ["home vs destination", "scarcity vs kindness"],
+        "desiredFeelings": ["relief", "belonging", "quiet wonder"],
+        "realization": "A place can become home through the quality of relationships rather than origin.",
+        "explicit": false
+      },
+      "sourceRefs": [
+        {
+          "id": "sm-source-1",
+          "label": "Novel Encyclopedia · Sunset Moonland",
+          "kind": "notion",
+          "note": "Developing side-story corpus."
+        },
+        {
+          "id": "sm-source-2",
+          "label": "Luminary Codex · Session 3",
+          "kind": "notion",
+          "note": "Three-era history and tone corrections."
+        }
+      ]
+    },
+    {
+      "id": "lucas-menezes",
+      "kind": "person",
+      "name": "Lucas Menezes",
+      "subtitle": "He feels the need before he feels his own exhaustion.",
+      "status": "developing",
+      "summary": "A 22-year-old environmental engineering student from Salvador whose instinct to help becomes both his magnetism and his burden.",
+      "body": [
+        "Lucas is defeated by scale rather than cruelty. The more he helps, the more clearly he sees the remaining need.",
+        "His arc is not about learning to care less. It is about learning that feeling another person's pain does not create an obligation to personally solve everything."
+      ],
+      "tags": ["Sunset Moonland", "Brazil", "empathy"],
+      "visual": {
+        "atmosphere": "warm",
+        "luminosity": "balanced",
+        "density": "spacious",
+        "motion": "gentle",
+        "materiality": "natural"
+      },
+      "meaning": {
+        "tensions": ["compassion vs self-erasure", "helping vs fixing"],
+        "desiredFeelings": ["empathy", "frustration", "admiration"],
+        "realization": "Feeling deeply does not require carrying everything.",
+        "explicit": false
+      },
+      "sourceRefs": [
+        {
+          "id": "lucas-source-1",
+          "label": "Character Architecture · Lucas & Teo",
+          "kind": "notion",
+          "note": "Developing character source."
+        }
+      ]
+    },
+    {
+      "id": "teo-duarte",
+      "kind": "person",
+      "name": "Mateus “Teo” Duarte",
+      "subtitle": "He reads people quickly enough to find a path through them.",
+      "status": "developing",
+      "summary": "A 21-year-old marine biology student from Florianópolis with an exceptional ability to understand people and turn perception into navigation.",
+      "body": [
+        "Teo can find an angle through almost any individual interaction, but a bureaucracy has no emotional state for him to read.",
+        "Where Lucas absorbs pain, Teo converts patterns into movement. Their friendship works because each corrects the other's blind spot."
+      ],
+      "tags": ["Sunset Moonland", "Brazil", "connection"],
+      "visual": {
+        "atmosphere": "serene",
+        "luminosity": "balanced",
+        "density": "balanced",
+        "motion": "gentle",
+        "materiality": "natural"
+      },
+      "meaning": {
+        "tensions": ["connection vs systems", "navigation vs grounding"],
+        "desiredFeelings": ["confidence", "curiosity", "affection"],
+        "realization": "Reading people becomes most powerful where the system is built from relationships.",
+        "explicit": false
+      },
+      "sourceRefs": [
+        {
+          "id": "teo-source-1",
+          "label": "Character Architecture · Lucas & Teo",
+          "kind": "notion",
+          "note": "Developing character source."
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-lum-proving",
+      "sourceId": "luminaries",
+      "targetId": "silent-proving",
+      "type": "practice",
+      "label": "selection practice",
+      "description": "The Proving protects Luminary capability from becoming inherited entitlement."
+    },
+    {
+      "id": "rel-lum-dark",
+      "sourceId": "luminaries",
+      "targetId": "dark-beings",
+      "type": "opposition",
+      "label": "philosophical conflict",
+      "description": "Restraint and restoration confront amplification and unresolved intent."
+    },
+    {
+      "id": "rel-cess-dark",
+      "sourceId": "cessation",
+      "targetId": "dark-beings",
+      "type": "amplification",
+      "label": "amplified by",
+      "description": "Dark Beings deepen the human consequences of a celestial trigger."
+    },
+    {
+      "id": "rel-sm-cess",
+      "sourceId": "sunset-moonland",
+      "targetId": "cessation",
+      "type": "aftermath",
+      "label": "reshaped by",
+      "description": "The post-Cessation world accelerates the settlement's growth."
+    },
+    {
+      "id": "rel-lucas-teo",
+      "sourceId": "lucas-menezes",
+      "targetId": "teo-duarte",
+      "type": "friendship",
+      "label": "closest friend",
+      "description": "Lucas sees the pain; Teo sees a way through."
+    },
+    {
+      "id": "rel-lucas-sm",
+      "sourceId": "lucas-menezes",
+      "targetId": "sunset-moonland",
+      "type": "journey",
+      "label": "finds belonging",
+      "description": "The place challenges his belief that helping means fixing."
+    },
+    {
+      "id": "rel-teo-sm",
+      "sourceId": "teo-duarte",
+      "targetId": "sunset-moonland",
+      "type": "journey",
+      "label": "finds fit",
+      "description": "A community built through relationships matches the way he naturally navigates."
+    }
+  ]
+}
