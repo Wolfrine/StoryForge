@@ -14,6 +14,8 @@ source validation
    ↓
 world compiler / automatic package discovery
    ↓
+asset pipeline
+   ↓
 Entry Resolver
    ↓
 Theme Runtime
@@ -34,6 +36,8 @@ storyworld/<world>/
     element-a/
       package.json
       media/
+        hero.webp
+        detail.webp
     element-b/
       package.json
       media/
@@ -43,6 +47,33 @@ storyworld/<world>/
 The world source does not list packages. The compiler discovers package folders.
 
 This is deliberate: 10, 100 or 5,000 elements do not require maintaining a central content index.
+
+## Media handoff
+
+Creator agents can use package-relative media references:
+
+```json
+{
+  "media": [
+    {
+      "id": "hero",
+      "type": "image",
+      "src": "media/hero.webp",
+      "role": "hero"
+    }
+  ]
+}
+```
+
+At build time StoryForge:
+1. verifies that the file exists inside the package
+2. prevents paths from escaping the package
+3. copies the asset into the web build's generated storyworld media directory
+4. rewrites the runtime URL
+
+External HTTPS/data assets can also be referenced directly.
+
+The renderer never generates a substitute story image.
 
 ## World source
 

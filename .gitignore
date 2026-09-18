@@ -7,3 +7,6 @@ firebase-debug.*.log
 .env.*
 !.env.example
 .DS_Store
+
+# StoryForge compiler output
+public/storyworld/

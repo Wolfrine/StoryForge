@@ -14,6 +14,8 @@ const validateSource = ajv.compile(sourceSchema);
 const validatePackage = ajv.compile(packageSchema);
 const errors = [];
 
+const isExternalAsset = (src) => /^(?:https?:|data:|blob:|\/)/i.test(src);
+
 if (!validateSource(source)) {
   for (const error of validateSource.errors ?? []) {
     errors.push(`world${error.instancePath || '/'} ${error.message}`);
@@ -28,7 +30,9 @@ const packageDirs = fs.existsSync(packageRoot)
 const packages = [];
 
 for (const dir of packageDirs) {
-  const packagePath = path.join(packageRoot, dir.name, 'package.json');
+  const packageDir = path.join(packageRoot, dir.name);
+  const packagePath = path.join(packageDir, 'package.json');
+
   if (!fs.existsSync(packagePath)) {
     errors.push(`${dir.name}: package.json missing`);
     continue;
@@ -45,6 +49,19 @@ for (const dir of packageDirs) {
 
   if (pkg.id !== dir.name) {
     errors.push(`${dir.name}: folder name must match package id ${pkg.id}`);
+  }
+
+  for (const media of pkg.media ?? []) {
+    if (isExternalAsset(media.src)) continue;
+
+    const assetPath = path.resolve(packageDir, media.src);
+    const packagePathRoot = path.resolve(packageDir);
+
+    if (!assetPath.startsWith(packagePathRoot + path.sep)) {
+      errors.push(`${pkg.id}: media path escapes package directory: ${media.src}`);
+    } else if (!fs.existsSync(assetPath) || !fs.statSync(assetPath).isFile()) {
+      errors.push(`${pkg.id}: local media file missing: ${media.src}`);
+    }
   }
 }
 
