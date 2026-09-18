@@ -1,26 +1,59 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import Ajv from 'ajv';
 
-const readJson = (path) => JSON.parse(fs.readFileSync(new URL(path, import.meta.url), 'utf8'));
+const root = process.env.STORYWORLD_ROOT || 'storyworld/testbench';
+const sourcePath = path.join(root, 'world.json');
+const source = JSON.parse(fs.readFileSync(sourcePath, 'utf8'));
 
-const packageSchema = readJson('../schema/story-package-v1.schema.json');
-const worldSchema = readJson('../schema/world-manifest-v1.schema.json');
-const world = readJson('../storyworld/testbench/world.json');
+const sourceSchema = JSON.parse(fs.readFileSync('schema/world-source-v1.schema.json', 'utf8'));
+const packageSchema = JSON.parse(fs.readFileSync('schema/story-package-v1.schema.json', 'utf8'));
 
 const ajv = new Ajv({ allErrors: true, strict: false });
-ajv.addSchema(packageSchema);
-const validateWorld = ajv.compile(worldSchema);
-
+const validateSource = ajv.compile(sourceSchema);
+const validatePackage = ajv.compile(packageSchema);
 const errors = [];
 
-if (!validateWorld(world)) {
-  for (const error of validateWorld.errors ?? []) {
-    errors.push(`${error.instancePath || '/'} ${error.message}`);
+if (!validateSource(source)) {
+  for (const error of validateSource.errors ?? []) {
+    errors.push(`world${error.instancePath || '/'} ${error.message}`);
   }
 }
 
+const packageRoot = path.join(root, source.packageDirectory ?? 'packages');
+const packageDirs = fs.existsSync(packageRoot)
+  ? fs.readdirSync(packageRoot, { withFileTypes: true }).filter((entry) => entry.isDirectory())
+  : [];
+
+const packages = [];
+
+for (const dir of packageDirs) {
+  const packagePath = path.join(packageRoot, dir.name, 'package.json');
+  if (!fs.existsSync(packagePath)) {
+    errors.push(`${dir.name}: package.json missing`);
+    continue;
+  }
+
+  const pkg = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+  packages.push(pkg);
+
+  if (!validatePackage(pkg)) {
+    for (const error of validatePackage.errors ?? []) {
+      errors.push(`${dir.name}${error.instancePath || '/'} ${error.message}`);
+    }
+  }
+
+  if (pkg.id !== dir.name) {
+    errors.push(`${dir.name}: folder name must match package id ${pkg.id}`);
+  }
+}
+
+if (!packages.length) {
+  errors.push('world contains no packages');
+}
+
 const packageIds = new Set();
-for (const pkg of world.packages ?? []) {
+for (const pkg of packages) {
   if (packageIds.has(pkg.id)) errors.push(`duplicate package id: ${pkg.id}`);
   packageIds.add(pkg.id);
 
@@ -45,7 +78,7 @@ for (const pkg of world.packages ?? []) {
   }
 }
 
-for (const pkg of world.packages ?? []) {
+for (const pkg of packages) {
   for (const relationship of pkg.relationships ?? []) {
     if (!packageIds.has(relationship.targetId)) {
       errors.push(`${pkg.id}: relationship points to missing package ${relationship.targetId}`);
@@ -60,7 +93,7 @@ if (errors.length) {
 }
 
 console.log(
-  `StoryForge v1 world valid: ${world.packages.length} packages, ${world.packages.reduce(
+  `StoryForge source valid: ${packages.length} packages, ${packages.reduce(
     (sum, pkg) => sum + (pkg.relationships?.length ?? 0),
     0
   )} outgoing relationships.`

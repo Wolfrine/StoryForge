@@ -4,24 +4,39 @@ StoryForge is a visualization engine. It is not a content author and it is not a
 
 ## Creator agents
 
-Creator agents own the story package.
+Creator agents own story packages.
 
-They may:
+Each ordinary story element lives independently:
+
+```text
+storyworld/<world>/
+  world.json
+  packages/
+    <stable-id>/
+      package.json
+      media/
+        ...
+```
+
+Adding a package folder is enough. The compiler discovers it automatically.
+
+Creator agents may:
 - write and revise text
 - generate/select images, video, audio and 3D assets
-- define the theme
+- save those assets in the package's media folder or reference a supported external asset
+- define the package theme
 - create semantic content blocks
-- create relationships to other packages
+- create relationships to other package IDs
 - set entry priority when an element should be easier to discover
-- decide which content is public, hidden or unfinished
+- decide whether a package is hidden or featured
 
 Creator agents must not:
 - create React components for individual story elements
 - create CSS for an individual story element
 - depend on one fixed frontend layout
-- duplicate content solely to satisfy a visualization
+- edit the engine to make their package render
 
-A creator should be able to add a new person, place, event, concept or story without modifying application code.
+A creator should be able to add a new person, place, event, concept or story without modifying application code or a central package registry.
 
 ## Engine agents
 
@@ -30,6 +45,7 @@ Engine agents own reusable rendering behavior.
 They may:
 - extend schemas
 - add generic block renderers
+- improve the compiler
 - improve entry resolution
 - improve composition rules
 - improve responsive behavior
@@ -43,12 +59,12 @@ Engine agents must not:
 - hardcode the visual identity of a named story element
 - add a layout because one specific entity needs it
 
-Forbidden examples:
+Forbidden:
 - `LucasPage.tsx`
 - `SunsetMoonlandScene.tsx`
 - `CessationTheme.css`
 
-Correct examples:
+Correct:
 - `BlockRenderer.tsx`
 - `entryResolver.ts`
 - `composition.ts`
@@ -57,7 +73,7 @@ Correct examples:
 
 ## Theme ownership
 
-Themes come from the content package. StoryForge interprets the theme; it does not author it.
+Themes come from creator packages. StoryForge interprets them; it does not author them.
 
 The runtime currently understands:
 - palette
@@ -70,7 +86,7 @@ The runtime currently understands:
 
 The landing is a stable centered engine surface.
 
-It never becomes a growing menu. As the world expands, the Entry Resolver selects a small number of directions using:
+It never becomes a growing menu. As the world expands, the Entry Resolver selects a bounded number of directions using:
 - creator priority
 - featured status
 - content richness
@@ -78,7 +94,11 @@ It never becomes a growing menu. As the world expands, the Entry Resolver select
 - relationship richness
 - type diversity
 
-The number of visible entry directions remains bounded.
+## Build/compiler contract
+
+`scripts/compile-world.mjs` discovers every package directory and generates the runtime world consumed by the web app.
+
+Creators never edit the generated runtime file.
 
 ## Fallback behavior
 

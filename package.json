@@ -1,15 +1,16 @@
 {
   "name": "storyforge",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run compile:world && vite",
+    "compile:world": "node scripts/compile-world.mjs",
     "validate:world": "node scripts/validate-world.mjs",
-    "build": "npm run validate:world && tsc --noEmit && vite build",
+    "build": "npm run validate:world && npm run compile:world && tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "npm run validate:world && npm run typecheck"
+    "test": "npm run validate:world && npm run compile:world && npm run typecheck"
   },
   "dependencies": {
     "ajv": "^8.17.1",

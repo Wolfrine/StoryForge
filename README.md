@@ -2,17 +2,17 @@
 
 StoryForge is a visualization and experience runtime for AI-authored storyworld packages.
 
-Its core rule is simple:
-
 > Creators create. StoryForge visualizes.
 
-Creator agents provide structured text, media, relationships and theme definitions. StoryForge validates those packages, chooses entry directions, interprets themes, composes semantic blocks and renders a responsive experience.
+Creator agents provide structured text, media, relationships and theme definitions. StoryForge discovers those packages automatically, validates them, chooses entry directions, interprets themes, composes semantic blocks and renders the experience.
 
 ## v1 foundation
 
+- independent package folders
+- automatic world compiler
 - Story Package Schema v1
-- World Manifest Schema v1
-- schema validation with relationship/media integrity checks
+- World Source Schema v1
+- relationship/media integrity validation
 - bounded Entry Resolver
 - fixed centered non-scrollable world landing
 - creator-defined Theme Runtime
@@ -30,13 +30,26 @@ Creator agents provide structured text, media, relationships and theme definitio
 
 There are no named story-element page components in the v1 architecture.
 
-## Structure
+## Source structure
 
 ```text
-schema/
-  story-package-v1.schema.json
-  world-manifest-v1.schema.json
+storyworld/testbench/
+  world.json
+  packages/
+    sunset-moonland/
+      package.json
+    lucas-menezes/
+      package.json
+    ...
+```
 
+In a real creator workflow, each package can also contain its own `media/` directory.
+
+The build compiler discovers packages automatically and produces `src/generated/world.json`. That generated file is runtime output, not an authoring surface.
+
+## Engine structure
+
+```text
 src/
   domain/
     story.ts
@@ -48,12 +61,6 @@ src/
   components/
     WorldLanding.tsx
     PackageExperience.tsx
-  content/
-    world.ts
-
-storyworld/
-  testbench/
-    world.json
 ```
 
 See `docs/ENGINE_V1.md` and `AGENTS.md`.
@@ -66,4 +73,4 @@ npm run build
 npm run dev
 ```
 
-The current testbench is deliberately not a replacement for canonical NovaSaga data. Creator pipelines will eventually emit v1 packages directly.
+The current testbench is deliberately not a replacement for canonical NovaSaga data. Creator pipelines will eventually emit v1 package folders directly.

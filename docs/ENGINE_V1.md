@@ -5,55 +5,64 @@
 Creators create. StoryForge visualizes.
 
 ```text
-Creator agents
-    ↓
-Story packages
+Creator agent
+   ↓
+independent package folder
 (text + media + theme + relationships + semantic blocks)
-    ↓
-Schema validation
-    ↓
+   ↓
+source validation
+   ↓
+world compiler / automatic package discovery
+   ↓
 Entry Resolver
-    ↓
+   ↓
 Theme Runtime
-    ↓
+   ↓
 Composition Engine
-    ↓
+   ↓
 Block / Visualization Registry
-    ↓
+   ↓
 Responsive Experience
 ```
 
-## World manifest
+## Stable source structure
 
-A world contains:
+```text
+storyworld/<world>/
+  world.json
+  packages/
+    element-a/
+      package.json
+      media/
+    element-b/
+      package.json
+      media/
+    ...
+```
+
+The world source does not list packages. The compiler discovers package folders.
+
+This is deliberate: 10, 100 or 5,000 elements do not require maintaining a central content index.
+
+## World source
+
+`world.json` contains only:
 - world identity
 - world-level fallback theme
 - entry policy
-- packages
-
-The world manifest does not prescribe pages.
+- package directory
 
 ## Story package
 
 A package is the smallest independently explorable unit.
 
-Examples can include:
-- person
-- place
-- event
-- concept
-- faction
-- object
-- story
-- collection
+Kind can describe a person, place, event, concept, faction, object, story, collection or other element, but kind does not select a page template.
 
-Kind is metadata. It does not select a page template.
-
-The actual presentation comes from:
+Presentation comes from:
 - semantic blocks
 - available media
 - creator-defined theme
-- composition rules
+- engine composition rules
 
 ## Semantic blocks v1
 
@@ -77,7 +86,7 @@ Future reusable blocks can include:
 - audio scene
 - 3D viewer
 
-Adding a new block renderer improves every compatible story package.
+Adding one renderer improves every compatible package.
 
 ## Entry Resolver
 
@@ -90,46 +99,44 @@ It scores packages from:
 - media richness
 - relationship richness
 
-If diversity is enabled, the resolver prefers different kinds before filling the remaining slots.
+With diversity enabled, the resolver prefers different kinds before filling remaining slots.
 
-Therefore 20, 200 or 2,000 story packages do not turn the landing into a menu.
+The landing therefore remains visually stable while content volume grows.
 
 ## Theme Runtime
 
-Creators provide semantic/direct theme information.
+Creators provide theme information.
 
-The engine converts it to shared CSS variables and reusable behavior.
-
-Current theme contract:
+The engine converts it into shared visual tokens and behavior:
 - palette
 - typography tone
 - motion pace
 - density
 - media weight
 
-The runtime supplies neutral fallbacks for omitted optional values.
+Neutral fallback values cover omitted optional fields.
 
 ## Composition Engine
 
-The engine composes blocks according to what exists.
+The engine composes blocks according to content.
 
 Examples:
-- hero/media → wide or full composition
+- hero/media → wide/full composition
 - prose → narrower reading measure
-- gallery → wider responsive grid
+- gallery → responsive media field
 - timeline/process → wide structured region
-- relationship block → connected navigation surface
+- relationships → contextual navigation
 
 No rule references a named story element.
 
 ## Testbench
 
-`storyworld/testbench/world.json` is not canonical lore.
+`storyworld/testbench` is a structural fixture only.
 
-It is a structural fixture used to prove that the same runtime can accept heterogeneous packages without custom frontend development.
+It proves the engine can discover heterogeneous packages and render them without custom frontend work.
 
 ## Success criterion
 
-A creator agent should be able to add a complete story element by writing data and assets only.
+A creator agent should be able to create a complete new element by adding one package folder containing data and assets.
 
-If frontend code must be changed for an ordinary new story element, the engine abstraction is incomplete.
+If ordinary content growth requires a frontend change, the engine abstraction is incomplete.

@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0",
+  "id": "silent-proving",
+  "kind": "concept",
+  "title": "The Silent Proving",
+  "summary": "A Luminary child grows up without knowledge of lineage so that character can be observed through genuine life rather than staged tests.",
+  "entry": {
+    "priority": 3
+  },
+  "tags": [
+    "selection",
+    "agency",
+    "character"
+  ],
+  "blocks": [
+    {
+      "id": "sp-hero",
+      "type": "hero",
+      "title": "The Silent Proving",
+      "subtitle": "Worthiness cannot be inherited."
+    },
+    {
+      "id": "sp-process",
+      "type": "process",
+      "heading": "The structure",
+      "items": [
+        {
+          "id": "sp1",
+          "title": "Birth",
+          "summary": "The family knows; the child does not."
+        },
+        {
+          "id": "sp2",
+          "title": "Ordinary life",
+          "summary": "The family lives among ordinary humans."
+        },
+        {
+          "id": "sp3",
+          "title": "Observation",
+          "summary": "Choices are watched without intervention."
+        },
+        {
+          "id": "sp4",
+          "title": "Return or exile",
+          "summary": "Lineage is revealed only if readiness is real."
+        }
+      ]
+    },
+    {
+      "id": "sp-rel",
+      "type": "relationships"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "sp-lum",
+      "targetId": "luminaries",
+      "label": "belongs to"
+    },
+    {
+      "id": "sp-sm",
+      "targetId": "sunset-moonland",
+      "label": "echoes in"
+    }
+  ]
+}
