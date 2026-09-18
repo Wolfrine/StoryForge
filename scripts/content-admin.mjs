@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import Ajv from 'ajv';
@@ -6,6 +7,7 @@ import {
   FieldValue,
   getFirestore
 } from 'firebase-admin/firestore';
+import { getStorage } from 'firebase-admin/storage';
 
 const projectId = process.env.FIREBASE_PROJECT_ID || 'lumio-forge';
 const worldId = process.env.STORYFORGE_WORLD_ID || 'novasaga';
@@ -22,15 +24,35 @@ if (!getApps().length) {
 }
 
 const db = getFirestore();
+const storage = getStorage();
+
 const packageSchema = JSON.parse(
   fs.readFileSync('schema/story-package-v1.schema.json', 'utf8')
 );
 const sourceSchema = JSON.parse(
   fs.readFileSync('schema/world-source-v1.schema.json', 'utf8')
 );
+
 const ajv = new Ajv({ allErrors: true, strict: false });
 const validatePackage = ajv.compile(packageSchema);
 const validateSource = ajv.compile(sourceSchema);
+
+const MIME_BY_EXTENSION = {
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.avif': 'image/avif',
+  '.gif': 'image/gif',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
+  '.mp3': 'audio/mpeg',
+  '.ogg': 'audio/ogg',
+  '.wav': 'audio/wav',
+  '.glb': 'model/gltf-binary',
+  '.gltf': 'model/gltf+json'
+};
 
 function usage() {
   console.log(`
@@ -45,9 +67,10 @@ Commands:
   pull [destinationDirectory]
 
 Environment:
-  FIREBASE_PROJECT_ID      default: lumio-forge
-  STORYFORGE_WORLD_ID      default: novasaga
-  STORYFORGE_AGENT_ID      actor recorded in metadata
+  FIREBASE_PROJECT_ID          default: lumio-forge
+  STORYFORGE_WORLD_ID          default: novasaga
+  STORYFORGE_AGENT_ID          actor recorded in metadata
+  STORYFORGE_STORAGE_BUCKET    optional bucket override
   GOOGLE_APPLICATION_CREDENTIALS must point to an authorized service-account JSON
 `);
 }
@@ -90,6 +113,188 @@ function cleanDocument(data) {
   if (!data) return null;
   const { _meta: _ignored, ...rest } = data;
   return rest;
+}
+
+function isExternalSource(src) {
+  return /^(?:https?:|data:|blob:|gs:\/\/|\/)/i.test(src);
+}
+
+function normalizeObjectPath(value) {
+  return value.replace(/\\/g, '/').replace(/^\/+/, '');
+}
+
+function mimeTypeFor(filePath) {
+  return MIME_BY_EXTENSION[path.extname(filePath).toLowerCase()] ||
+    'application/octet-stream';
+}
+
+async function resolveBucketName() {
+  if (process.env.STORYFORGE_STORAGE_BUCKET) {
+    return process.env.STORYFORGE_STORAGE_BUCKET;
+  }
+
+  try {
+    const response = await fetch(
+      'https://lumio-forge.web.app/__/firebase/init.json',
+      { cache: 'no-store' }
+    );
+
+    if (response.ok) {
+      const config = await response.json();
+      if (config.storageBucket) return config.storageBucket;
+    }
+  } catch {
+    // Fall through.
+  }
+
+  return `${projectId}-storyforge-media`;
+}
+
+function parseGsUrl(value) {
+  if (!value.startsWith('gs://')) return null;
+
+  const withoutScheme = value.slice('gs://'.length);
+  const slash = withoutScheme.indexOf('/');
+  if (slash < 0) return null;
+
+  return {
+    bucket: withoutScheme.slice(0, slash),
+    objectPath: withoutScheme.slice(slash + 1)
+  };
+}
+
+function firebaseDownloadUrl(bucketName, objectPath, token) {
+  return (
+    `https://firebasestorage.googleapis.com/v0/b/${encodeURIComponent(bucketName)}` +
+    `/o/${encodeURIComponent(objectPath)}?alt=media&token=${encodeURIComponent(token)}`
+  );
+}
+
+async function uploadLocalMedia(pkg, packageJsonPath, mode) {
+  if (!pkg.media?.length) return pkg;
+
+  const packageDir = path.resolve(path.dirname(packageJsonPath));
+  const bucketName = await resolveBucketName();
+  const bucket = storage.bucket(bucketName);
+
+  const updated = structuredClone(pkg);
+
+  for (const asset of updated.media) {
+    if (isExternalSource(asset.src)) continue;
+
+    const localPath = path.resolve(packageDir, asset.src);
+
+    if (!localPath.startsWith(packageDir + path.sep)) {
+      throw new Error(
+        `${pkg.id}: media path escapes package folder: ${asset.src}`
+      );
+    }
+
+    if (!fs.existsSync(localPath) || !fs.statSync(localPath).isFile()) {
+      throw new Error(
+        `${pkg.id}: media file does not exist: ${asset.src}`
+      );
+    }
+
+    const relative = normalizeObjectPath(asset.src);
+    const destination =
+      `storyworlds/${worldId}/${mode === 'draft' ? 'drafts' : 'packages'}/` +
+      `${pkg.id}/${relative}`;
+
+    if (mode === 'draft') {
+      await bucket.upload(localPath, {
+        destination,
+        resumable: false,
+        metadata: {
+          contentType: mimeTypeFor(localPath),
+          cacheControl: 'private,max-age=0,no-store',
+          metadata: {
+            storyforgePackageId: pkg.id,
+            storyforgeStatus: 'draft',
+            storyforgeSourcePath: relative
+          }
+        }
+      });
+
+      asset.src = `gs://${bucketName}/${destination}`;
+      console.log(`draft media uploaded: ${pkg.id}/${asset.id} -> ${destination}`);
+      continue;
+    }
+
+    const token = crypto.randomUUID();
+
+    await bucket.upload(localPath, {
+      destination,
+      resumable: false,
+      metadata: {
+        contentType: mimeTypeFor(localPath),
+        cacheControl: 'public,max-age=31536000,immutable',
+        metadata: {
+          firebaseStorageDownloadTokens: token,
+          storyforgePackageId: pkg.id,
+          storyforgeStatus: 'published',
+          storyforgeSourcePath: relative
+        }
+      }
+    });
+
+    asset.src = firebaseDownloadUrl(bucketName, destination, token);
+    console.log(`published media uploaded: ${pkg.id}/${asset.id} -> ${destination}`);
+  }
+
+  return updated;
+}
+
+async function publishDraftMedia(pkg) {
+  if (!pkg.media?.length) return pkg;
+
+  const updated = structuredClone(pkg);
+  const defaultBucketName = await resolveBucketName();
+
+  for (const asset of updated.media) {
+    const parsed = parseGsUrl(asset.src);
+    if (!parsed) continue;
+
+    const expectedPrefix = `storyworlds/${worldId}/drafts/${pkg.id}/`;
+    if (!parsed.objectPath.startsWith(expectedPrefix)) {
+      throw new Error(
+        `${pkg.id}: draft media object is outside expected draft prefix: ${asset.src}`
+      );
+    }
+
+    const bucketName = parsed.bucket || defaultBucketName;
+    const bucket = storage.bucket(bucketName);
+    const sourceFile = bucket.file(parsed.objectPath);
+
+    const sourceSuffix = parsed.objectPath.slice(expectedPrefix.length);
+    const publishedPath =
+      `storyworlds/${worldId}/packages/${pkg.id}/${sourceSuffix}`;
+    const destinationFile = bucket.file(publishedPath);
+
+    await sourceFile.copy(destinationFile);
+
+    const [sourceMetadata] = await sourceFile.getMetadata();
+    const token = crypto.randomUUID();
+
+    await destinationFile.setMetadata({
+      contentType: sourceMetadata.contentType,
+      cacheControl: 'public,max-age=31536000,immutable',
+      metadata: {
+        ...(sourceMetadata.metadata ?? {}),
+        firebaseStorageDownloadTokens: token,
+        storyforgePackageId: pkg.id,
+        storyforgeStatus: 'published'
+      }
+    });
+
+    asset.src = firebaseDownloadUrl(bucketName, publishedPath, token);
+
+    console.log(
+      `draft media published: ${pkg.id}/${asset.id} -> ${publishedPath}`
+    );
+  }
+
+  return updated;
 }
 
 async function writePackage(pkg, mode = 'published') {
@@ -170,14 +375,18 @@ async function seed(sourceRoot = 'storyworld/testbench') {
     const packagePath = path.join(packagesRoot, dir.name, 'package.json');
     if (!fs.existsSync(packagePath)) continue;
 
-    const pkg = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+    let pkg = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
     validatePackageOrThrow(pkg, packagePath);
 
-    if (pkg.entry?.hidden && process.env.STORYFORGE_SEED_INCLUDE_HIDDEN !== 'true') {
+    if (
+      pkg.entry?.hidden &&
+      process.env.STORYFORGE_SEED_INCLUDE_HIDDEN !== 'true'
+    ) {
       skippedHidden += 1;
       continue;
     }
 
+    pkg = await uploadLocalMedia(pkg, packagePath, 'published');
     await writePackage(pkg, 'published');
     published += 1;
   }
@@ -195,12 +404,13 @@ async function list(mode = 'published') {
     .get();
 
   const rows = snapshot.docs
-    .map((doc) => {
-      const data = doc.data();
+    .map((document) => {
+      const data = document.data();
       return {
-        id: doc.id,
+        id: document.id,
         title: data.title,
         kind: data.kind,
+        mediaCount: Array.isArray(data.media) ? data.media.length : 0,
         revision: data._meta?.revision ?? 0,
         updatedBy: data._meta?.updatedBy ?? null
       };
@@ -221,7 +431,10 @@ async function get(packageId, mode = 'published') {
 }
 
 async function put(packageJsonPath, mode = 'draft') {
-  const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  let pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  validatePackageOrThrow(pkg, packageJsonPath);
+
+  pkg = await uploadLocalMedia(pkg, packageJsonPath, mode);
   await writePackage(pkg, mode);
 }
 
@@ -233,7 +446,10 @@ async function publish(packageId) {
     throw new Error(`Draft package not found: ${packageId}`);
   }
 
-  const pkg = cleanDocument(draft.data());
+  let pkg = cleanDocument(draft.data());
+  pkg = await publishDraftMedia(pkg);
+  validatePackageOrThrow(pkg, packageId);
+
   await writePackage(pkg, 'published');
 
   await draftRef.set(
@@ -329,6 +545,6 @@ try {
       process.exit(command ? 1 : 0);
   }
 } catch (error) {
-  console.error(error instanceof Error ? error.message : error);
+  console.error(error instanceof Error ? error.stack ?? error.message : error);
   process.exit(1);
 }

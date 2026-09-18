@@ -10,8 +10,9 @@ import {
   type ContentSource
 } from './content/repository';
 
-const statsMode =
-  new URLSearchParams(window.location.search).get('stats') === '1';
+const params = new URLSearchParams(window.location.search);
+const statsMode = params.get('stats') === '1';
+const requestedPackageId = params.get('package');
 
 function App() {
   const [world, setWorld] = useState<StoryWorldManifest>(
@@ -20,7 +21,9 @@ function App() {
   const [contentSource, setContentSource] =
     useState<ContentSource>('snapshot');
   const [contentReady, setContentReady] = useState(false);
-  const [activePackageId, setActivePackageId] = useState<string | null>(null);
+  const [activePackageId, setActivePackageId] = useState<string | null>(
+    requestedPackageId
+  );
 
   useEffect(() => {
     initializeAnalytics();
@@ -89,9 +92,15 @@ function App() {
           package_kind: activePackage.kind
         });
         setActivePackageId(null);
+        window.history.replaceState({}, '', window.location.pathname);
       }}
       onOpenPackage={(id) => {
         setActivePackageId(id);
+        window.history.replaceState(
+          {},
+          '',
+          `?package=${encodeURIComponent(id)}`
+        );
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }}
     />

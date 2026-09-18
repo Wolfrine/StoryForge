@@ -5,7 +5,7 @@ on:
     branches:
       - "content/**"
     paths:
-      - "storyworld/authoring/packages/**/package.json"
+      - "storyworld/authoring/packages/**"
 
 jobs:
   sync-drafts:
@@ -35,7 +35,7 @@ jobs:
           set -euo pipefail
           printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "${{ runner.temp }}/firebase-service-account.json"
 
-      - name: Push changed packages to Firestore drafts
+      - name: Push changed package folders to Firestore drafts
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
           FIREBASE_PROJECT_ID: lumio-forge
@@ -45,18 +45,28 @@ jobs:
           set -euo pipefail
 
           if git rev-parse HEAD^ >/dev/null 2>&1; then
-            FILES=$(git diff --name-only HEAD^ HEAD -- 'storyworld/authoring/packages/**/package.json')
+            FILES=$(git diff --name-only HEAD^ HEAD -- 'storyworld/authoring/packages/**')
           else
-            FILES=$(git ls-files 'storyworld/authoring/packages/**/package.json')
+            FILES=$(git ls-files 'storyworld/authoring/packages/**')
           fi
 
           if [ -z "$FILES" ]; then
-            echo "No changed StoryForge packages."
+            echo "No changed StoryForge package files."
             exit 0
           fi
 
-          while IFS= read -r file; do
-            [ -z "$file" ] && continue
-            echo "Syncing draft: $file"
-            npm run content:admin -- put "$file" draft
-          done <<< "$FILES"
+          PACKAGE_DIRS=$(printf '%s
+' "$FILES" | awk -F/ 'NF >= 4 {print $1"/"$2"/"$3"/"$4}' | sort -u)
+
+          while IFS= read -r dir; do
+            [ -z "$dir" ] && continue
+            package_file="$dir/package.json"
+
+            if [ ! -f "$package_file" ]; then
+              echo "Skipping removed/incomplete package folder: $dir"
+              continue
+            fi
+
+            echo "Syncing draft package: $package_file"
+            npm run content:admin -- put "$package_file" draft
+          done <<< "$PACKAGE_DIRS"
