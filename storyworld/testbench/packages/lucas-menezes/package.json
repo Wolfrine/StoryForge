@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0",
+  "id": "lucas-menezes",
+  "kind": "person",
+  "title": "Lucas Menezes",
+  "summary": "A young environmental engineering student whose instinct to help becomes both his magnetism and his burden.",
+  "entry": {
+    "priority": 3
+  },
+  "tags": [
+    "Brazil",
+    "empathy",
+    "journey"
+  ],
+  "theme": {
+    "palette": {
+      "background": "#edf4ef",
+      "foreground": "#24413f",
+      "surface": "#fbfdf9",
+      "muted": "#6a7f7a",
+      "accent": "#4e8a7e"
+    },
+    "composition": {
+      "mediaWeight": "dominant"
+    }
+  },
+  "blocks": [
+    {
+      "id": "lucas-hero",
+      "type": "hero",
+      "title": "Lucas Menezes",
+      "subtitle": "He notices need before he notices his own exhaustion."
+    },
+    {
+      "id": "lucas-prose",
+      "type": "prose",
+      "paragraphs": [
+        "Lucas is defeated by scale rather than cruelty. The more he helps, the more clearly he sees what remains undone.",
+        "His arc is not about caring less. It is about learning that feeling another person's pain does not create an obligation to personally solve everything."
+      ]
+    },
+    {
+      "id": "lucas-quote",
+      "type": "quote",
+      "text": "Feeling deeply does not require carrying everything."
+    },
+    {
+      "id": "lucas-rel",
+      "type": "relationships"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "lucas-sm",
+      "targetId": "sunset-moonland",
+      "label": "arrives at"
+    },
+    {
+      "id": "lucas-cess",
+      "targetId": "cessation",
+      "label": "survives"
+    }
+  ]
+}

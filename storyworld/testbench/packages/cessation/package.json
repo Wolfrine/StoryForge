@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1.0",
+  "id": "cessation",
+  "kind": "event",
+  "title": "The Cessation",
+  "summary": "A global failure of engineered electrical conduction that collapses systems while leaving biological electrochemistry intact.",
+  "entry": {
+    "priority": 5,
+    "featured": true
+  },
+  "tags": [
+    "world event",
+    "collapse",
+    "ambiguity"
+  ],
+  "theme": {
+    "palette": {
+      "background": "#f0e8e1",
+      "foreground": "#3b3031",
+      "surface": "#faf5f0",
+      "muted": "#7a6967",
+      "accent": "#b94e40"
+    },
+    "composition": {
+      "density": "balanced",
+      "mediaWeight": "dominant"
+    }
+  },
+  "blocks": [
+    {
+      "id": "cess-hero",
+      "type": "hero",
+      "title": "The Cessation",
+      "subtitle": "Technology fails faster than people can understand why."
+    },
+    {
+      "id": "cess-prose",
+      "type": "prose",
+      "paragraphs": [
+        "The Cessation is a systems failure, not a clean reset. Water, food, medicine, transport, communications and public trust fail on different clocks.",
+        "At the same time, weakened boundaries make the hidden world easier to encounter precisely when people have the least capacity to interpret it."
+      ]
+    },
+    {
+      "id": "cess-timeline",
+      "type": "timeline",
+      "heading": "Propagation",
+      "items": [
+        {
+          "id": "c1",
+          "title": "The disturbance begins"
+        },
+        {
+          "id": "c2",
+          "title": "Engineered conduction fails"
+        },
+        {
+          "id": "c3",
+          "title": "Cities lose coordination"
+        },
+        {
+          "id": "c4",
+          "title": "Local systems adapt"
+        }
+      ]
+    },
+    {
+      "id": "cess-rel",
+      "type": "relationships"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "cess-sm",
+      "targetId": "sunset-moonland",
+      "label": "reshapes"
+    },
+    {
+      "id": "cess-lum",
+      "targetId": "luminaries",
+      "label": "exposes"
+    },
+    {
+      "id": "cess-canvas",
+      "targetId": "obscured-canvas",
+      "label": "clears"
+    }
+  ]
+}

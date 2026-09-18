@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "1.0",
+  "id": "obscured-canvas",
+  "kind": "concept",
+  "title": "The Obscured Canvas",
+  "summary": "Knowledge accumulates like marks on white paper until the marks are mistaken for the whole of reality.",
+  "entry": {
+    "priority": 4
+  },
+  "tags": [
+    "perception",
+    "knowledge",
+    "map vs territory"
+  ],
+  "theme": {
+    "palette": {
+      "background": "#fbfaf6",
+      "foreground": "#343244",
+      "surface": "#ffffff",
+      "muted": "#7c778c",
+      "accent": "#7461a3"
+    },
+    "composition": {
+      "density": "airy",
+      "mediaWeight": "low"
+    }
+  },
+  "blocks": [
+    {
+      "id": "canvas-hero",
+      "type": "hero",
+      "title": "The Obscured Canvas",
+      "subtitle": "The map can be correct without being complete."
+    },
+    {
+      "id": "canvas-prose",
+      "type": "prose",
+      "paragraphs": [
+        "The canvas is not an argument against knowledge. The marks are useful, often beautiful, and frequently correct.",
+        "The error begins when their density makes the unmarked space impossible to perceive."
+      ]
+    },
+    {
+      "id": "canvas-quote",
+      "type": "quote",
+      "text": "The paper was always white. We just couldn't see it anymore."
+    },
+    {
+      "id": "canvas-rel",
+      "type": "relationships"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "canvas-lum",
+      "targetId": "luminaries",
+      "label": "perceived by"
+    },
+    {
+      "id": "canvas-cess",
+      "targetId": "cessation",
+      "label": "revealed through"
+    }
+  ]
+}

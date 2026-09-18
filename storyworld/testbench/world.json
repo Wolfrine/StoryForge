@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0",
+  "id": "novasaga-engine-fixture",
+  "title": "NovaSaga",
+  "subtitle": "Choose a direction. The world expands from there.",
+  "theme": {
+    "palette": {
+      "background": "#f2efe7",
+      "foreground": "#263b47",
+      "surface": "#fffdf8",
+      "muted": "#74818a",
+      "accent": "#9a674e"
+    },
+    "typography": {
+      "tone": "editorial"
+    },
+    "motion": {
+      "pace": "slow"
+    },
+    "composition": {
+      "density": "airy",
+      "mediaWeight": "balanced"
+    }
+  },
+  "entryPolicy": {
+    "maxDirections": 5,
+    "preferDiversity": true
+  },
+  "packageDirectory": "packages"
+}

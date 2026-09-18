@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "1.0",
+  "id": "sunset-moonland",
+  "kind": "place",
+  "title": "Sunset Moonland",
+  "summary": "A post-Cessation settlement beside deep blue water, shaped by exile, arrival and the possibility of belonging.",
+  "entry": {
+    "priority": 4,
+    "featured": true
+  },
+  "tags": [
+    "community",
+    "water",
+    "belonging"
+  ],
+  "theme": {
+    "palette": {
+      "background": "#f6efe1",
+      "foreground": "#2a3e47",
+      "surface": "#fffaf1",
+      "muted": "#6f7a78",
+      "accent": "#b56b4f"
+    },
+    "composition": {
+      "mediaWeight": "dominant",
+      "density": "airy"
+    }
+  },
+  "blocks": [
+    {
+      "id": "sm-hero",
+      "type": "hero",
+      "title": "Sunset Moonland",
+      "subtitle": "A place that can become home before you realize you stopped leaving."
+    },
+    {
+      "id": "sm-prose",
+      "type": "prose",
+      "heading": "The place",
+      "paragraphs": [
+        "Sunset Moonland is not important because it has escaped hardship. Its importance comes from a social fabric where the personal still reaches the system.",
+        "Its history accumulates across eras: exile, rediscovery, settlement, and finally the arrival of people who were only trying to pass through."
+      ]
+    },
+    {
+      "id": "sm-timeline",
+      "type": "timeline",
+      "heading": "Layers of the place",
+      "items": [
+        {
+          "id": "sm-t1",
+          "label": "≈ 500 years earlier",
+          "title": "An exile finds the land",
+          "summary": "A Luminary child in permanent exile withdraws here and slowly changes."
+        },
+        {
+          "id": "sm-t2",
+          "label": "Before the Cessation",
+          "title": "A fisherman returns",
+          "summary": "A storm reveals the place; he later comes back with his wife."
+        },
+        {
+          "id": "sm-t3",
+          "label": "After the Cessation",
+          "title": "A community forms",
+          "summary": "Travelers begin to stay."
+        }
+      ]
+    },
+    {
+      "id": "sm-rel",
+      "type": "relationships",
+      "heading": "Threads leaving the place"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "sm-lucas",
+      "targetId": "lucas-menezes",
+      "label": "changes"
+    },
+    {
+      "id": "sm-cessation",
+      "targetId": "cessation",
+      "label": "reshaped by"
+    },
+    {
+      "id": "sm-proving",
+      "targetId": "silent-proving",
+      "label": "echoes"
+    }
+  ]
+}

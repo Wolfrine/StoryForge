@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0",
+  "id": "luminaries",
+  "kind": "faction",
+  "title": "The Luminaries",
+  "summary": "A hidden tradition concerned with perception, balance, restraint and the responsibility that comes with greater capability.",
+  "entry": {
+    "priority": 4
+  },
+  "tags": [
+    "balance",
+    "restraint",
+    "hidden order"
+  ],
+  "blocks": [
+    {
+      "id": "lum-hero",
+      "type": "hero",
+      "title": "The Luminaries",
+      "subtitle": "Power is treated as responsibility before capability."
+    },
+    {
+      "id": "lum-prose",
+      "type": "prose",
+      "paragraphs": [
+        "Luminary practice begins with perception and self-regulation rather than spectacle.",
+        "Their settlements, rituals and concealed institutions preserve knowledge that becomes dangerous when stripped of responsibility."
+      ]
+    },
+    {
+      "id": "lum-rel",
+      "type": "relationships"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "lum-sp",
+      "targetId": "silent-proving",
+      "label": "practice"
+    },
+    {
+      "id": "lum-canvas",
+      "targetId": "obscured-canvas",
+      "label": "worldview"
+    },
+    {
+      "id": "lum-cess",
+      "targetId": "cessation",
+      "label": "responds to"
+    }
+  ]
+}

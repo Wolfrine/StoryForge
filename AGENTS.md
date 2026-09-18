@@ -1,69 +1,107 @@
 # StoryForge Agent Contract
 
-StoryForge is an engine, not a collection of hand-built story pages.
+StoryForge is a visualization engine. It is not a content author and it is not a collection of hand-designed story pages.
 
-## Separation of responsibilities
+## Creator agents
 
-### Creator / lore agents
+Creator agents own story packages.
+
+Each ordinary story element lives independently:
+
+```text
+storyworld/<world>/
+  world.json
+  packages/
+    <stable-id>/
+      package.json
+      media/
+        ...
+```
+
+Adding a package folder is enough. The compiler discovers it automatically.
+
 Creator agents may:
-- create and refine storyworld entities
-- create relationships, events, chronology, media references, meaning metadata and provenance
-- update canon/developing/legacy/conflict state
-- add semantic visual identity cues
+- write and revise text
+- generate/select images, video, audio and 3D assets
+- save those assets in the package's media folder or reference a supported external asset
+- define the package theme
+- create semantic content blocks
+- create relationships to other package IDs
+- set entry priority when an element should be easier to discover
+- decide whether a package is hidden or featured
 
 Creator agents must not:
-- create entity-specific React pages
-- choose pixel layouts, CSS values or frontend component composition
-- duplicate facts just to make a particular view easier to render
-- modify engine behavior to accommodate one lore element
+- create React components for individual story elements
+- create CSS for an individual story element
+- depend on one fixed frontend layout
+- edit the engine to make their package render
 
-### Engine / UI agents
-Engine agents may:
-- add reusable visualizers
-- improve visualization resolution
-- improve theme and experience rules
-- add schema validation, search, map, graph, timeline, media and rendering infrastructure
+A creator should be able to add a new person, place, event, concept or story without modifying application code or a central package registry.
+
+## Engine agents
+
+Engine agents own reusable rendering behavior.
+
+They may:
+- extend schemas
+- add generic block renderers
+- improve the compiler
+- improve entry resolution
+- improve composition rules
+- improve responsive behavior
+- add reusable visualization primitives such as maps, timelines, graphs and galleries
+- improve asset loading, transitions and accessibility
 
 Engine agents must not:
-- rewrite lore because a visualizer expects a different shape
-- silently change canon state
-- infer missing canon facts and persist them as truth
+- create entity-specific components
+- invent missing lore
+- generate replacement story imagery
+- hardcode the visual identity of a named story element
+- add a layout because one specific entity needs it
 
-## Content model
+Forbidden:
+- `LucasPage.tsx`
+- `SunsetMoonlandScene.tsx`
+- `CessationTheme.css`
 
-All storyworld data follows the schemas in /schema.
+Correct:
+- `BlockRenderer.tsx`
+- `entryResolver.ts`
+- `composition.ts`
+- `MapBlock.tsx`
+- `RelationshipGraph.tsx`
 
-Core primitives:
-1. Entity
-2. Relationship
-3. Event/sequence data
-4. Media
-5. Meaning metadata
-6. Provenance/canon metadata
+## Theme ownership
 
-The engine must degrade gracefully. If a specialized visualization is unavailable, a valid entity must still render through generic visual modules.
+Themes come from creator packages. StoryForge interprets them; it does not author them.
 
-## Meaning metadata
+The runtime currently understands:
+- palette
+- typography tone
+- motion pace
+- composition density
+- media weight
 
-Meaning metadata is primarily for the experience engine and Studio mode. It should not be printed as a moral or lesson in ordinary reader mode.
+## Landing
 
-## Source boundaries
+The landing is a stable centered engine surface.
 
-- StoryForge owns the engine and normalized rendering contract.
-- NovaSaga and other story repositories own their source material.
-- The /storyworld/sample dataset is a test fixture, not an authoritative replacement for NovaSaga canon.
+It never becomes a growing menu. As the world expands, the Entry Resolver selects a bounded number of directions using:
+- creator priority
+- featured status
+- content richness
+- media richness
+- relationship richness
+- type diversity
 
-## UI rule
+## Build/compiler contract
 
-Do not create components named after individual entities such as LucasPage, SunsetMoonlandPage or CessationPage.
+`scripts/compile-world.mjs` discovers every package directory and generates the runtime world consumed by the web app.
 
-Generic examples are acceptable:
-- EntityRenderer
-- TimelineVisualizer
-- RelationshipVisualizer
-- PlaceVisualizer
-- CharacterVisualizer
+Creators never edit the generated runtime file.
 
-## Deployment
+## Fallback behavior
 
-Production deployment targets Firebase project lumio-forge through GitHub Actions.
+Valid content must always render.
+
+Missing optional media, theme fields or specialized visualizations must degrade to a neutral StoryForge fallback rather than requiring frontend work.
