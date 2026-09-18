@@ -1,0 +1,58 @@
+name: StoryForge Firestore Migration
+
+on:
+  push:
+    branches:
+      - pwa-content-v1
+    paths:
+      - ".github/workflows/firestore-migrate.yml"
+      - "scripts/deploy-firestore-rules.mjs"
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install
+        run: npm install --no-audit --no-fund
+
+      - name: Prepare Firebase credentials
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "${{ runner.temp }}/firebase-service-account.json"
+
+      - name: Deploy Firestore rules through Rules API
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
+          FIREBASE_PROJECT_ID: lumio-forge
+        run: node scripts/deploy-firestore-rules.mjs
+
+      - name: Seed published StoryForge packages
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
+          FIREBASE_PROJECT_ID: lumio-forge
+          STORYFORGE_WORLD_ID: novasaga
+          STORYFORGE_AGENT_ID: initial-firestore-migration
+        run: npm run content:seed
+
+      - name: Verify published packages
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
+          FIREBASE_PROJECT_ID: lumio-forge
+          STORYFORGE_WORLD_ID: novasaga
+          STORYFORGE_AGENT_ID: migration-verification
+        run: npm run content:list
