@@ -1,0 +1,531 @@
+/* StoryForge v0.5 — scene-first refinement.
+   This file intentionally overrides the earlier exploratory shell while the
+   design branch is under visual QA. */
+
+.opening-v05 .opening-wash {
+  background:
+    linear-gradient(90deg, rgba(250,247,239,.94) 0%, rgba(250,247,239,.72) 30%, rgba(250,247,239,.15) 58%, rgba(250,247,239,0) 76%),
+    linear-gradient(180deg, rgba(255,255,255,.04) 0%, transparent 58%, rgba(25,47,60,.18) 100%);
+}
+
+.opening-v05 .opening-copy {
+  width: min(760px, 56vw);
+  padding: clamp(136px, 17vh, 206px) 0 0 clamp(26px, 6vw, 92px);
+}
+
+.opening-v05 .opening-copy > span {
+  color: #8b654d;
+  font-size: 9px;
+  letter-spacing: .18em;
+}
+
+.opening-v05 .opening-copy h1 {
+  max-width: 760px;
+  margin-top: 17px;
+  font-size: clamp(62px, 8.4vw, 128px);
+  line-height: .86;
+  color: #253c4e;
+}
+
+.opening-v05 .opening-copy p {
+  max-width: 510px;
+  margin-top: 26px;
+  color: #455f72;
+  font-size: clamp(19px, 1.9vw, 27px);
+  line-height: 1.45;
+}
+
+.opening-topline {
+  position: absolute;
+  top: 28px;
+  left: clamp(26px, 4vw, 58px);
+  right: clamp(26px, 4vw, 58px);
+  display: flex;
+  justify-content: space-between;
+  color: rgba(37,60,78,.56);
+  font-size: 8px;
+  letter-spacing: .18em;
+}
+
+.opening-entry {
+  position: absolute;
+  left: clamp(26px, 6vw, 92px);
+  bottom: clamp(35px, 6vh, 66px);
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(26px, 4vw, 54px);
+}
+
+.opening-primary {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  width: min(420px, 42vw);
+  border: 0;
+  border-top: 1px solid rgba(37,60,78,.36);
+  border-bottom: 1px solid rgba(37,60,78,.20);
+  background: transparent;
+  color: #263f51;
+  padding: 15px 0 17px;
+  text-align: left;
+  cursor: pointer;
+  transition: padding-left 180ms ease, border-color 180ms ease;
+}
+
+.opening-primary:hover {
+  padding-left: 10px;
+  border-top-color: #b66f4d;
+}
+
+.opening-primary small {
+  grid-column: 1;
+  color: #9a6d53;
+  font-size: 8px;
+  letter-spacing: .13em;
+}
+
+.opening-primary strong {
+  grid-column: 1;
+  margin-top: 7px;
+  font-family: Iowan Old Style, Baskerville, Georgia, serif;
+  font-size: clamp(27px, 2.7vw, 42px);
+  font-weight: 400;
+  letter-spacing: -.025em;
+}
+
+.opening-primary span {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: end;
+  padding-bottom: 4px;
+  color: #526b7c;
+  font-size: 9px;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+}
+
+.opening-alternates {
+  display: flex;
+  gap: 28px;
+  padding-bottom: 4px;
+}
+
+.opening-alternates button {
+  min-width: 120px;
+  border: 0;
+  background: transparent;
+  color: #314b5d;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.opening-alternates small {
+  display: block;
+  color: rgba(49,75,93,.54);
+  font-size: 7px;
+  letter-spacing: .13em;
+}
+
+.opening-alternates strong {
+  display: block;
+  margin-top: 6px;
+  font-family: Iowan Old Style, Baskerville, Georgia, serif;
+  font-size: 16px;
+  font-weight: 400;
+  border-bottom: 1px solid rgba(49,75,93,.24);
+  padding-bottom: 4px;
+}
+
+.opening-coordinate {
+  position: absolute;
+  right: clamp(26px, 4vw, 58px);
+  bottom: clamp(28px, 5vh, 58px);
+  display: grid;
+  grid-template-columns: 24px minmax(0, 225px);
+  gap: 11px;
+  color: rgba(245,240,224,.86);
+}
+
+.opening-coordinate span {
+  font-size: 8px;
+  letter-spacing: .12em;
+}
+
+.opening-coordinate p {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+/* Remove app-like chrome. */
+.v05 ~ * {}
+
+.storyforge-shell .floating-chrome {
+  padding-top: 20px;
+}
+
+.storyforge-shell .wordmark {
+  gap: 9px;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  padding: 0;
+  color: #263d4e;
+}
+
+.storyforge-shell .wordmark > span {
+  width: 29px;
+  height: 29px;
+  border-color: rgba(38,61,78,.35);
+}
+
+.storyforge-shell .wordmark strong {
+  font-size: 9px;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.storyforge-shell .mode-switch {
+  gap: 17px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.storyforge-shell .mode-switch button {
+  position: relative;
+  border-radius: 0;
+  padding: 5px 0;
+  color: rgba(38,61,78,.55);
+  font-size: 8px;
+  letter-spacing: .13em;
+}
+
+.storyforge-shell .mode-switch button.active {
+  background: transparent;
+  box-shadow: none;
+  color: #263d4e;
+}
+
+.storyforge-shell .mode-switch button.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+}
+
+/* Hero composition */
+.v05-stage {
+  min-height: 100svh;
+}
+
+.v05-stage .stage-light {
+  background:
+    linear-gradient(90deg, rgba(250,248,242,.91) 0%, rgba(250,248,242,.69) 29%, rgba(250,248,242,.12) 57%, rgba(250,248,242,0) 72%),
+    linear-gradient(180deg, transparent 58%, rgba(30,49,61,.13) 100%);
+}
+
+.v05.scene-portrait .stage-light {
+  background:
+    linear-gradient(90deg, rgba(244,249,245,.94) 0%, rgba(244,249,245,.69) 31%, rgba(244,249,245,.08) 56%, rgba(244,249,245,0) 72%);
+}
+
+.v05.scene-rupture .stage-light {
+  background:
+    linear-gradient(90deg, rgba(247,241,235,.92) 0%, rgba(247,241,235,.70) 30%, rgba(247,241,235,.08) 55%, rgba(247,241,235,0) 70%),
+    linear-gradient(180deg, transparent 60%, rgba(37,38,44,.17) 100%);
+}
+
+.v05.scene-abstract .stage-light {
+  background:
+    linear-gradient(90deg, rgba(255,254,250,.96) 0%, rgba(255,254,250,.77) 35%, rgba(255,254,250,.06) 61%, rgba(255,254,250,0) 75%);
+}
+
+.v05-stage .stage-meta {
+  top: 86px;
+  color: rgba(41,61,76,.52);
+  letter-spacing: .15em;
+}
+
+.v05-stage .stage-title {
+  bottom: clamp(78px, 10vh, 116px);
+  width: min(720px, 54vw);
+}
+
+.v05-stage .stage-title h1 {
+  max-width: 740px;
+  font-size: clamp(65px, 8.6vw, 132px);
+  line-height: .83;
+}
+
+.v05-stage .stage-title p {
+  max-width: 590px;
+  font-size: clamp(19px, 2vw, 29px);
+}
+
+.v05-stage .stage-title a {
+  gap: 11px;
+  margin-top: 25px;
+  font-size: 8px;
+  letter-spacing: .13em;
+}
+
+.v05-stage .stage-title a i {
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  color: var(--sf-accent);
+}
+
+.stage-coordinate {
+  position: absolute;
+  right: var(--stage-padding);
+  top: 89px;
+  z-index: 3;
+  display: flex;
+  gap: 11px;
+  color: rgba(43,66,82,.48);
+  font-size: 7px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+
+.stage-coordinate span + span::before {
+  content: "×";
+  margin-right: 11px;
+  opacity: .5;
+}
+
+/* Relationships are scene annotations, not cards. */
+.scene-links {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.scene-links button {
+  --lx: 72%;
+  --ly: 30%;
+  position: absolute;
+  left: var(--lx);
+  top: var(--ly);
+  display: flex;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  color: #2c4659;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translate(-5px, -50%);
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+
+.scene-links button:hover {
+  transform: translate(2px, -50%);
+}
+
+.scene-link-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border: 2px solid rgba(255,255,255,.92);
+  border-radius: 50%;
+  background: var(--sf-accent);
+  box-shadow: 0 0 0 4px rgba(255,255,255,.25);
+}
+
+.scene-link-line {
+  width: clamp(30px, 5vw, 72px);
+  height: 1px;
+  margin-left: 6px;
+  background: linear-gradient(90deg, rgba(44,70,89,.52), rgba(44,70,89,.14));
+}
+
+.scene-link-copy {
+  display: grid;
+  gap: 3px;
+  margin-left: 9px;
+  padding: 6px 8px 7px;
+  background: rgba(255,255,255,.28);
+  backdrop-filter: blur(5px);
+  border-radius: 6px;
+}
+
+.scene-link-copy small {
+  color: rgba(44,70,89,.56);
+  font-size: 7px;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+}
+
+.scene-link-copy strong {
+  font-family: Iowan Old Style, Baskerville, Georgia, serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.04;
+}
+
+.scene-rupture .scene-link-copy {
+  background: rgba(246,241,235,.36);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .opening-v05 .opening-art .scene-svg,
+  .v05-stage .stage-art .scene-svg {
+    animation: sf-scene-breathe 18s ease-in-out infinite alternate;
+    transform-origin: 60% 50%;
+  }
+
+  .scene-links button:nth-child(2) { animation: sf-float 6s ease-in-out infinite alternate; }
+  .scene-links button:nth-child(3) { animation: sf-float 7.5s ease-in-out .6s infinite alternate; }
+}
+
+@keyframes sf-scene-breathe {
+  from { transform: scale(1.003) translate3d(0,0,0); }
+  to { transform: scale(1.025) translate3d(-.4%, -.25%, 0); }
+}
+
+@keyframes sf-float {
+  from { margin-top: -2px; }
+  to { margin-top: 3px; }
+}
+
+/* Deep layer slightly less like a standard article. */
+.v05 .story-layer {
+  background:
+    radial-gradient(circle at 82% 6%, var(--sf-accent-soft), transparent 28rem),
+    var(--sf-bg);
+}
+
+.v05 .meaning-entry {
+  padding-top: clamp(100px, 11vw, 164px);
+}
+
+.v05 .meaning-entry p {
+  max-width: 920px;
+}
+
+.v05 .editorial-copy p {
+  color: color-mix(in srgb, var(--sf-text) 92%, transparent);
+}
+
+/* Mobile: let the visual breathe and remove annotation clutter. */
+@media (max-width: 760px) {
+  .opening-v05 {
+    min-height: 930px;
+  }
+
+  .opening-v05 .opening-wash {
+    background:
+      linear-gradient(180deg, rgba(250,247,239,.90) 0%, rgba(250,247,239,.66) 38%, rgba(250,247,239,.16) 68%, rgba(28,49,61,.12) 100%);
+  }
+
+  .opening-v05 .opening-copy {
+    width: auto;
+    padding: 112px 20px 0;
+  }
+
+  .opening-v05 .opening-copy h1 {
+    max-width: 96%;
+    font-size: clamp(52px, 15vw, 72px);
+  }
+
+  .opening-v05 .opening-copy p {
+    max-width: 86%;
+    font-size: 19px;
+  }
+
+  .opening-topline {
+    top: 72px;
+    left: 20px;
+    right: 20px;
+  }
+
+  .opening-topline span:first-child {
+    display: none;
+  }
+
+  .opening-entry {
+    left: 20px;
+    right: 20px;
+    bottom: 24px;
+    display: grid;
+    gap: 17px;
+  }
+
+  .opening-primary {
+    width: 100%;
+  }
+
+  .opening-alternates {
+    gap: 22px;
+  }
+
+  .opening-coordinate {
+    display: none;
+  }
+
+  .storyforge-shell .mode-switch {
+    gap: 12px;
+  }
+
+  .v05-stage {
+    min-height: 850px;
+  }
+
+  .v05-stage .stage-light {
+    background:
+      linear-gradient(180deg, rgba(250,248,242,.86) 0%, rgba(250,248,242,.54) 34%, rgba(250,248,242,.06) 62%, rgba(27,46,59,.14) 100%);
+  }
+
+  .v05-stage .stage-meta {
+    left: 18px;
+    top: 76px;
+  }
+
+  .v05-stage .stage-title {
+    left: 18px;
+    right: 18px;
+    width: auto;
+    bottom: 58px;
+  }
+
+  .v05-stage .stage-title h1 {
+    max-width: 96%;
+    font-size: clamp(52px, 15vw, 78px);
+  }
+
+  .v05-stage .stage-title p {
+    max-width: 92%;
+    font-size: 20px;
+  }
+
+  .stage-coordinate,
+  .scene-links {
+    display: none;
+  }
+}
+
+@media (max-width: 440px) {
+  .opening-v05 .opening-copy h1 {
+    font-size: 54px;
+  }
+
+  .opening-primary strong {
+    font-size: 28px;
+  }
+
+  .v05-stage .stage-title h1 {
+    font-size: 56px;
+  }
+}

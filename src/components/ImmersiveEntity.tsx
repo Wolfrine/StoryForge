@@ -11,6 +11,12 @@ interface Props {
   onSelectEntity: (id: string) => void;
 }
 
+const linkPositions = [
+  { x: 72, y: 25 },
+  { x: 82, y: 51 },
+  { x: 67, y: 72 }
+];
+
 export function ImmersiveEntity({ world, entity, studio, onSelectEntity }: Props) {
   const theme = resolveTheme(entity);
   const family = entity.visual?.sceneFamily ?? 'abstract';
@@ -38,44 +44,55 @@ export function ImmersiveEntity({ world, entity, studio, onSelectEntity }: Props
 
   return (
     <article
-      className={`immersive-entity scene-${family} kind-${entity.kind}`}
+      className={`immersive-entity v05 scene-${family} kind-${entity.kind}`}
       style={style}
     >
-      <section className="cinematic-stage">
+      <section className="cinematic-stage v05-stage">
         <div className="stage-art" aria-hidden="true">
           <SceneArtwork entity={entity} />
         </div>
         <div className="stage-light" />
 
         <div className="stage-meta">
+          <span>{world.name}</span>
           <span>{entity.kind}</span>
           <span>{entity.status}</span>
-          <span>{world.name}</span>
         </div>
 
         <div className="stage-title">
           <span className="stage-kicker">{entity.tags?.[0] ?? 'Storyworld thread'}</span>
           <h1>{entity.name}</h1>
           {entity.subtitle && <p>{entity.subtitle}</p>}
-          <a href="#deeper">Discover this thread <i>↓</i></a>
+          <a href="#deeper">
+            <span>Look beneath the first impression</span>
+            <i>↓</i>
+          </a>
         </div>
 
         {related.length ? (
-          <div className="stage-threads" aria-label="Nearby story threads">
-            {related.slice(0, 3).map(({ entity: other, relationship }, index) => (
-              <button
-                key={relationship.id}
-                type="button"
-                onClick={() => onSelectEntity(other.id)}
-              >
-                <span>{String(index + 1).padStart(2, '0')} · {relationship.label}</span>
-                <strong>{other.name}</strong>
-              </button>
-            ))}
+          <div className="scene-links" aria-label="Connected story threads">
+            {related.slice(0, linkPositions.length).map(({ entity: other, relationship }, index) => {
+              const pos = linkPositions[index] ?? linkPositions[0]!;
+              return (
+                <button
+                  key={relationship.id}
+                  type="button"
+                  style={{ '--lx': `${pos.x}%`, '--ly': `${pos.y}%` } as CSSProperties}
+                  onClick={() => onSelectEntity(other.id)}
+                >
+                  <span className="scene-link-dot" />
+                  <span className="scene-link-line" />
+                  <span className="scene-link-copy">
+                    <small>{relationship.label}</small>
+                    <strong>{other.name}</strong>
+                  </span>
+                </button>
+              );
+            })}
           </div>
         ) : null}
 
-        <div className="stage-caption">
+        <div className="stage-coordinate">
           <span>{entity.visual?.atmosphere ?? 'world'}</span>
           <span>{entity.visual?.materiality ?? 'presence'}</span>
         </div>

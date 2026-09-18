@@ -18,37 +18,56 @@ export function Opening({ world, onEnter }: Props) {
 
   if (!backdrop) return null;
 
-  const paths = [
-    place ? { entity: place, cue: 'Begin with a place', note: 'Belonging before explanation' } : null,
-    person ? { entity: person, cue: 'Begin with a person', note: 'A human thread through the world' } : null,
-    event ? { entity: event, cue: 'Begin with a rupture', note: 'See what changed everything' } : null
-  ].filter((value) => value !== null);
-
   return (
-    <section className="opening">
+    <section className="opening opening-v05">
       <div className="opening-art">
         <SceneArtwork entity={backdrop} />
       </div>
       <div className="opening-wash" />
+
+      <div className="opening-topline">
+        <span>STORYFORGE</span>
+        <span>NOVASAGA / EXPLORE BY CURIOSITY</span>
+      </div>
+
       <div className="opening-copy">
-        <span>NovaSaga / a world to be discovered</span>
-        <h1>Don’t start with the explanation.</h1>
-        <p>Start with something you notice. The world will reveal itself from there.</p>
+        <span>THE WORLD AFTER THE CESSATION</span>
+        <h1>The wires went quiet.<br />The world did not.</h1>
+        <p>
+          Begin somewhere that should not have survived.
+          Follow whatever catches your attention from there.
+        </p>
       </div>
-      <div className="opening-paths">
-        {paths.map(({ entity, cue, note }, index) => (
-          <button type="button" key={entity.id} onClick={() => onEnter(entity.id)}>
-            <span>{String(index + 1).padStart(2, '0')}</span>
-            <div>
-              <small>{cue}</small>
-              <strong>{entity.name}</strong>
-              <em>{note}</em>
-            </div>
-            <i>↗</i>
+
+      <div className="opening-entry">
+        {place ? (
+          <button className="opening-primary" type="button" onClick={() => onEnter(place.id)}>
+            <small>YOUR FIRST THREAD</small>
+            <strong>{place.name}</strong>
+            <span>Enter the place ↗</span>
           </button>
-        ))}
+        ) : null}
+
+        <div className="opening-alternates">
+          {person ? (
+            <button type="button" onClick={() => onEnter(person.id)}>
+              <small>OR MEET</small>
+              <strong>{person.name}</strong>
+            </button>
+          ) : null}
+          {event ? (
+            <button type="button" onClick={() => onEnter(event.id)}>
+              <small>OR WITNESS</small>
+              <strong>{event.name}</strong>
+            </button>
+          ) : null}
+        </div>
       </div>
-      <div className="opening-mark">STORYFORGE</div>
+
+      <div className="opening-coordinate">
+        <span>01</span>
+        <p>A world does not need to be understood before it can be felt.</p>
+      </div>
     </section>
   );
 }
