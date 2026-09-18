@@ -70,10 +70,13 @@ if (!packages.length) {
 }
 
 const packageIds = new Set();
+
 for (const pkg of packages) {
   if (packageIds.has(pkg.id)) errors.push(`duplicate package id: ${pkg.id}`);
   packageIds.add(pkg.id);
+}
 
+for (const pkg of packages) {
   const mediaIds = new Set((pkg.media ?? []).map((media) => media.id));
   const blockIds = new Set();
 
@@ -92,10 +95,43 @@ for (const pkg of packages) {
         }
       }
     }
-  }
-}
 
-for (const pkg of packages) {
+    if (block.type === 'annotatedMedia' && !mediaIds.has(block.mediaId)) {
+      errors.push(`${pkg.id}: annotatedMedia references missing media ${block.mediaId}`);
+    }
+
+    if (block.type === 'journey') {
+      for (const stop of block.stops) {
+        if (stop.targetId && !packageIds.has(stop.targetId)) {
+          errors.push(`${pkg.id}: journey stop ${stop.id} targets missing package ${stop.targetId}`);
+        }
+      }
+    }
+
+    if (block.type === 'comparison') {
+      const columnIds = new Set(block.columns.map((column) => column.id));
+      for (const row of block.rows) {
+        for (const valueKey of Object.keys(row.values)) {
+          if (!columnIds.has(valueKey)) {
+            errors.push(`${pkg.id}: comparison row ${row.id} contains unknown column ${valueKey}`);
+          }
+        }
+      }
+    }
+
+    if (block.type === 'graph') {
+      const nodeIds = new Set(block.nodes.map((node) => node.id));
+      for (const edge of block.edges) {
+        if (!nodeIds.has(edge.source)) {
+          errors.push(`${pkg.id}: graph edge ${edge.id} missing source node ${edge.source}`);
+        }
+        if (!nodeIds.has(edge.target)) {
+          errors.push(`${pkg.id}: graph edge ${edge.id} missing target node ${edge.target}`);
+        }
+      }
+    }
+  }
+
   for (const relationship of pkg.relationships ?? []) {
     if (!packageIds.has(relationship.targetId)) {
       errors.push(`${pkg.id}: relationship points to missing package ${relationship.targetId}`);

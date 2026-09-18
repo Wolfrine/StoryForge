@@ -47,6 +47,46 @@ export interface MediaAsset {
   };
 }
 
+export interface Annotation {
+  id: string;
+  x: number;
+  y: number;
+  title: string;
+  summary?: string;
+}
+
+export interface JourneyStop {
+  id: string;
+  label?: string;
+  title: string;
+  summary?: string;
+  targetId?: string;
+}
+
+export interface ComparisonColumn {
+  id: string;
+  label: string;
+}
+
+export interface ComparisonRow {
+  id: string;
+  label: string;
+  values: Record<string, string>;
+}
+
+export interface GraphNode {
+  id: string;
+  label: string;
+  kind?: string;
+}
+
+export interface GraphEdge {
+  id: string;
+  source: string;
+  target: string;
+  label?: string;
+}
+
 export type StoryBlock =
   | {
       id: string;
@@ -75,6 +115,13 @@ export type StoryBlock =
     }
   | {
       id: string;
+      type: 'annotatedMedia';
+      mediaId: string;
+      heading?: string;
+      annotations: Annotation[];
+    }
+  | {
+      id: string;
       type: 'timeline';
       heading?: string;
       items: Array<{
@@ -93,6 +140,26 @@ export type StoryBlock =
         title: string;
         summary?: string;
       }>;
+    }
+  | {
+      id: string;
+      type: 'journey';
+      heading?: string;
+      stops: JourneyStop[];
+    }
+  | {
+      id: string;
+      type: 'comparison';
+      heading?: string;
+      columns: ComparisonColumn[];
+      rows: ComparisonRow[];
+    }
+  | {
+      id: string;
+      type: 'graph';
+      heading?: string;
+      nodes: GraphNode[];
+      edges: GraphEdge[];
     }
   | {
       id: string;

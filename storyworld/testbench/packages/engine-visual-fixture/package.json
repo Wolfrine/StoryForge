@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "1.0",
+  "id": "engine-visual-fixture",
+  "kind": "other",
+  "title": "Engine Visual Fixture",
+  "summary": "Hidden package used to validate reusable visualization primitives.",
+  "entry": {
+    "hidden": true
+  },
+  "media": [
+    {
+      "id": "fixture-map",
+      "type": "image",
+      "role": "diagram",
+      "alt": "Abstract engine fixture",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 700'%3E%3Crect width='1200' height='700' fill='%23eef2ec'/%3E%3Cpath d='M120 540 Q400 160 650 360 T1080 180' fill='none' stroke='%23647f78' stroke-width='14'/%3E%3Ccircle cx='290' cy='390' r='28' fill='%23b56b4f'/%3E%3Ccircle cx='650' cy='360' r='28' fill='%234e8a7e'/%3E%3Ccircle cx='980' cy='225' r='28' fill='%237461a3'/%3E%3C/svg%3E"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "annotated",
+      "type": "annotatedMedia",
+      "heading": "Annotated media",
+      "mediaId": "fixture-map",
+      "annotations": [
+        {
+          "id": "a1",
+          "x": 24,
+          "y": 56,
+          "title": "First point",
+          "summary": "Generic annotation."
+        },
+        {
+          "id": "a2",
+          "x": 54,
+          "y": 51,
+          "title": "Second point",
+          "summary": "Another annotation."
+        },
+        {
+          "id": "a3",
+          "x": 82,
+          "y": 32,
+          "title": "Third point",
+          "summary": "Annotations belong to content."
+        }
+      ]
+    },
+    {
+      "id": "journey",
+      "type": "journey",
+      "heading": "Journey",
+      "stops": [
+        {
+          "id": "j1",
+          "label": "Stage 1",
+          "title": "Departure"
+        },
+        {
+          "id": "j2",
+          "label": "Stage 2",
+          "title": "Crossing",
+          "summary": "A generic middle stage."
+        },
+        {
+          "id": "j3",
+          "label": "Stage 3",
+          "title": "Arrival",
+          "targetId": "sunset-moonland"
+        }
+      ]
+    },
+    {
+      "id": "comparison",
+      "type": "comparison",
+      "heading": "Comparison",
+      "columns": [
+        {
+          "id": "before",
+          "label": "Before"
+        },
+        {
+          "id": "after",
+          "label": "After"
+        }
+      ],
+      "rows": [
+        {
+          "id": "r1",
+          "label": "State",
+          "values": {
+            "before": "Stable",
+            "after": "Changed"
+          }
+        },
+        {
+          "id": "r2",
+          "label": "Access",
+          "values": {
+            "before": "Limited",
+            "after": "Expanded"
+          }
+        }
+      ]
+    },
+    {
+      "id": "graph",
+      "type": "graph",
+      "heading": "Graph",
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Person",
+          "kind": "entity"
+        },
+        {
+          "id": "n2",
+          "label": "Place",
+          "kind": "entity"
+        },
+        {
+          "id": "n3",
+          "label": "Event",
+          "kind": "entity"
+        },
+        {
+          "id": "n4",
+          "label": "Concept",
+          "kind": "entity"
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "source": "n1",
+          "target": "n2",
+          "label": "visits"
+        },
+        {
+          "id": "e2",
+          "source": "n2",
+          "target": "n3",
+          "label": "hosts"
+        },
+        {
+          "id": "e3",
+          "source": "n3",
+          "target": "n4",
+          "label": "expresses"
+        },
+        {
+          "id": "e4",
+          "source": "n4",
+          "target": "n1",
+          "label": "shapes"
+        }
+      ]
+    }
+  ],
+  "relationships": []
+}

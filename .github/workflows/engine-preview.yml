@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - engine-v1
+      - engine-v1.1
   workflow_dispatch:
 
 jobs:

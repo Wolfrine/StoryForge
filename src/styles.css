@@ -1087,3 +1087,296 @@ a:focus-visible {
 .sf-stats-row-wide {
   grid-template-columns: minmax(180px, 1.5fr) repeat(6, minmax(68px, .42fr));
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Engine v1.1 generic visualization primitives                               */
+/* -------------------------------------------------------------------------- */
+
+.sf-annotated-media {
+  position: relative;
+}
+
+.sf-annotated-media > .sf-asset {
+  min-height: 320px;
+}
+
+.sf-annotation-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.sf-annotation {
+  --annotation-x: 50%;
+  --annotation-y: 50%;
+  position: absolute;
+  left: var(--annotation-x);
+  top: var(--annotation-y);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: min(260px, 30vw);
+  border: 0;
+  background: transparent;
+  color: var(--sf-foreground);
+  padding: 0;
+  text-align: left;
+  transform: translate(-12px, -50%);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.sf-annotation > span {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
+  place-items: center;
+  border: 2px solid var(--sf-surface);
+  border-radius: 50%;
+  background: var(--sf-accent);
+  color: var(--sf-surface);
+  font-size: 7px;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--sf-surface) 32%, transparent);
+}
+
+.sf-annotation > div {
+  display: grid;
+  gap: 3px;
+  max-width: 0;
+  overflow: hidden;
+  padding: 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--sf-surface) 85%, transparent);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transition:
+    max-width 180ms ease,
+    padding 180ms ease,
+    opacity 180ms ease;
+}
+
+.sf-annotation:hover > div,
+.sf-annotation:focus-visible > div {
+  max-width: 220px;
+  padding: 8px 10px;
+  opacity: 1;
+}
+
+.sf-annotation strong {
+  font-family: var(--sf-display-font);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.sf-annotation small {
+  color: var(--sf-muted);
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.sf-journey-track {
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(220px, 1fr);
+  gap: 0;
+  overflow-x: auto;
+  padding: 18px 0 10px;
+  scroll-snap-type: x proximity;
+}
+
+.sf-journey-track::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 42px;
+  height: 1px;
+  background: color-mix(in srgb, var(--sf-foreground) 15%, transparent);
+}
+
+.sf-journey-stop {
+  position: relative;
+  min-height: 245px;
+  border: 0;
+  border-right: 1px solid color-mix(in srgb, var(--sf-foreground) 11%, transparent);
+  background: transparent;
+  color: var(--sf-foreground);
+  padding: 0 22px 28px;
+  text-align: left;
+  scroll-snap-align: start;
+}
+
+.sf-journey-stop:first-child {
+  padding-left: 0;
+}
+
+.sf-journey-stop::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: 22px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--sf-background);
+  border-radius: 50%;
+  background: var(--sf-accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--sf-accent) 55%, transparent);
+}
+
+.sf-journey-stop:first-child::before {
+  left: 0;
+}
+
+.sf-journey-stop-link {
+  cursor: pointer;
+}
+
+.sf-journey-stop-link:hover {
+  background: color-mix(in srgb, var(--sf-accent) 5%, transparent);
+}
+
+.sf-journey-index {
+  display: block;
+  margin: 58px 0 34px;
+  color: var(--sf-accent);
+  font-size: 8px;
+  letter-spacing: .12em;
+}
+
+.sf-journey-stop small {
+  display: block;
+  color: var(--sf-muted);
+  font-size: 8px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.sf-journey-stop strong {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--sf-display-font);
+  font-size: clamp(20px, 2vw, 29px);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.sf-journey-stop p {
+  margin: 12px 0 0;
+  color: var(--sf-muted);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.sf-journey-stop i {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  color: var(--sf-accent);
+  font-style: normal;
+}
+
+.sf-comparison {
+  --comparison-columns: 2;
+  overflow-x: auto;
+  border-top: 1px solid color-mix(in srgb, var(--sf-foreground) 13%, transparent);
+}
+
+.sf-comparison-head,
+.sf-comparison-row {
+  display: grid;
+  grid-template-columns:
+    minmax(150px, .8fr)
+    repeat(var(--comparison-columns), minmax(150px, 1fr));
+  min-width: calc(170px + var(--comparison-columns) * 170px);
+}
+
+.sf-comparison-head > *,
+.sf-comparison-row > * {
+  padding: 17px 14px;
+  border-right: 1px solid color-mix(in srgb, var(--sf-foreground) 9%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--sf-foreground) 9%, transparent);
+}
+
+.sf-comparison-head {
+  color: var(--sf-muted);
+  font-size: 8px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.sf-comparison-row > strong {
+  font-family: var(--sf-display-font);
+  font-size: 17px;
+  font-weight: 400;
+}
+
+.sf-comparison-row > span {
+  color: var(--sf-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.sf-graph-wrap {
+  overflow-x: auto;
+  padding: 10px 0 0;
+}
+
+.sf-graph {
+  display: block;
+  width: 100%;
+  min-width: 720px;
+  min-height: 480px;
+}
+
+.sf-graph-edges line {
+  stroke: color-mix(in srgb, var(--sf-foreground) 16%, transparent);
+  stroke-width: 1.2;
+}
+
+.sf-graph-edges text {
+  fill: var(--sf-muted);
+  font-size: 9px;
+  letter-spacing: .04em;
+}
+
+.sf-graph-nodes circle:first-of-type {
+  fill: var(--sf-surface);
+  stroke: color-mix(in srgb, var(--sf-foreground) 20%, transparent);
+  stroke-width: 1.2;
+  filter: drop-shadow(0 7px 12px color-mix(in srgb, var(--sf-foreground) 8%, transparent));
+}
+
+.sf-graph-node-core {
+  fill: var(--sf-accent);
+}
+
+.sf-graph-node-label {
+  fill: var(--sf-foreground);
+  font-family: var(--sf-display-font);
+  font-size: 15px;
+}
+
+.sf-graph-node-kind {
+  fill: var(--sf-muted);
+  font-size: 8px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 700px) {
+  .sf-annotation {
+    max-width: 180px;
+  }
+
+  .sf-annotation > div {
+    display: none;
+  }
+
+  .sf-journey-track {
+    grid-auto-columns: minmax(210px, 78vw);
+  }
+}
