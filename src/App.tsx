@@ -5,10 +5,6 @@ import { sampleWorld } from './content/loadWorld';
 
 type Mode = 'world' | 'atlas' | 'studio';
 
-interface ViewTransitionDocument extends Document {
-  startViewTransition?: (callback: () => void) => unknown;
-}
-
 function App() {
   const [selectedId, setSelectedId] = useState(sampleWorld.entities[0]?.id ?? '');
   const [mode, setMode] = useState<Mode>('world');
@@ -24,9 +20,8 @@ function App() {
       if (enterWorld) setMode(mode === 'studio' ? 'studio' : 'world');
     };
 
-    const transitionDocument = document as ViewTransitionDocument;
-    if (transitionDocument.startViewTransition) {
-      transitionDocument.startViewTransition(update);
+    if (typeof document.startViewTransition === 'function') {
+      document.startViewTransition(update);
     } else {
       update();
     }
