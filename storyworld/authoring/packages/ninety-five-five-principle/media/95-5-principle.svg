@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">The 95/5 Principle</title>
+  <desc id="desc">A large circular field represents documented knowledge, with a small open segment representing direct perception beyond the documented map.</desc>
+  <defs>
+    <radialGradient id="paper" cx="50%" cy="42%" r="68%">
+      <stop offset="0%" stop-color="#fffdf8"/>
+      <stop offset="100%" stop-color="#eee7d8"/>
+    </radialGradient>
+    <linearGradient id="mapped" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#527b88"/>
+      <stop offset="100%" stop-color="#294756"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e7af7c"/>
+      <stop offset="100%" stop-color="#bd6846"/>
+    </linearGradient>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#1c3440" flood-opacity=".14"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="700" fill="url(#paper)"/>
+
+  <g opacity=".22" stroke="#6f7c82" fill="none">
+    <circle cx="600" cy="350" r="290"/>
+    <circle cx="600" cy="350" r="235"/>
+    <circle cx="600" cy="350" r="180"/>
+    <path d="M140 350H1060"/>
+    <path d="M600 70V630"/>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <circle cx="600" cy="350" r="220" fill="none" stroke="#d8d0c1" stroke-width="88"/>
+    <circle cx="600" cy="350" r="220" fill="none" stroke="url(#mapped)" stroke-width="88"
+      stroke-linecap="round"
+      stroke-dasharray="1313 69"
+      transform="rotate(-88 600 350)"/>
+    <circle cx="600" cy="350" r="220" fill="none" stroke="url(#edge)" stroke-width="88"
+      stroke-linecap="round"
+      stroke-dasharray="57 1325"
+      stroke-dashoffset="-1318"
+      transform="rotate(-88 600 350)"/>
+  </g>
+
+  <circle cx="600" cy="350" r="126" fill="#fffaf2" stroke="#d9cfbe" stroke-width="2"/>
+  <text x="600" y="332" text-anchor="middle" font-family="Georgia, serif" font-size="70" fill="#253b48">95 / 5</text>
+  <text x="600" y="382" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" letter-spacing="4" fill="#7c716a">ONE FIELD</text>
+
+  <g font-family="system-ui, sans-serif">
+    <text x="170" y="165" font-size="15" letter-spacing="3" fill="#71808a">DOCUMENTED / MAPPED</text>
+    <text x="170" y="200" font-size="28" fill="#294756">Technique · Models · Practice</text>
+    <path d="M355 214C420 250 440 280 472 304" fill="none" stroke="#527b88" stroke-width="2"/>
+    <circle cx="475" cy="306" r="5" fill="#527b88"/>
+
+    <text x="835" y="130" font-size="15" letter-spacing="3" fill="#9f684e">DIRECT / UNMAPPED EDGE</text>
+    <text x="835" y="165" font-size="28" fill="#bd6846">Perception · Intuition · Context</text>
+    <path d="M864 182C830 222 815 242 790 275" fill="none" stroke="#bd6846" stroke-width="2"/>
+    <circle cx="788" cy="278" r="5" fill="#bd6846"/>
+  </g>
+
+  <g transform="translate(160 540)">
+    <rect x="0" y="0" width="880" height="74" rx="37" fill="#fffaf2" stroke="#dbd1c1"/>
+    <circle cx="42" cy="37" r="9" fill="#527b88"/>
+    <text x="68" y="44" font-family="Georgia, serif" font-size="21" fill="#435b66">
+      Mastery does not discard the map; it becomes sensitive to where the map stops explaining the territory.
+    </text>
+  </g>
+</svg>

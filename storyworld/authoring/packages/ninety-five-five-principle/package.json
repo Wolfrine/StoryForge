@@ -1,0 +1,155 @@
+{
+  "schemaVersion": "1.0",
+  "id": "ninety-five-five-principle",
+  "kind": "concept",
+  "title": "The 95/5 Principle",
+  "summary": "Most mastery can be explained by documented knowledge; the last edge often comes from direct perception, intuition and pattern recognition that formal systems have not fully mapped.",
+  "entry": {
+    "priority": 1,
+    "featured": false,
+    "hidden": true
+  },
+  "theme": {
+    "palette": {
+      "background": "#f6f2e8",
+      "foreground": "#253b48",
+      "surface": "#fffdf8",
+      "muted": "#6f7c82",
+      "accent": "#c07a52"
+    },
+    "typography": {
+      "tone": "editorial"
+    },
+    "motion": {
+      "pace": "slow"
+    },
+    "composition": {
+      "density": "airy",
+      "mediaWeight": "dominant"
+    }
+  },
+  "media": [
+    {
+      "id": "principle-diagram",
+      "type": "image",
+      "src": "media/95-5-principle.svg",
+      "alt": "A circular visual showing a large mapped 95 percent field and a small open 5 percent field representing direct perception beyond documented systems.",
+      "role": "diagram",
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "id": "hero",
+      "type": "hero",
+      "title": "The 95/5 Principle",
+      "subtitle": "The map can take you very far. The final edge may come from perceiving what the map does not yet describe.",
+      "mediaId": "principle-diagram"
+    },
+    {
+      "id": "premise",
+      "type": "prose",
+      "heading": "Documented knowledge is the foundation",
+      "paragraphs": [
+        "The principle does not dismiss science, craft or accumulated knowledge. Most reliable capability comes from exactly those things: tested methods, language, measurement, training and repetition.",
+        "The remaining edge is not magic or randomness. It is the part of skilled perception that can be experienced before it can be cleanly represented inside the current formal model."
+      ]
+    },
+    {
+      "id": "diagram-notes",
+      "type": "annotatedMedia",
+      "heading": "One field, two ways of knowing",
+      "mediaId": "principle-diagram",
+      "annotations": [
+        {
+          "id": "mapped",
+          "x": 38,
+          "y": 49,
+          "title": "The mapped 95%",
+          "summary": "Repeatable knowledge, documented craft, methods, models and accumulated technique."
+        },
+        {
+          "id": "direct",
+          "x": 79,
+          "y": 31,
+          "title": "The remaining edge",
+          "summary": "Direct perception, tacit judgment and pattern recognition that may not yet have a formal vocabulary."
+        }
+      ]
+    },
+    {
+      "id": "comparison",
+      "type": "comparison",
+      "heading": "The two layers work together",
+      "columns": [
+        {
+          "id": "mapped",
+          "label": "Mapped knowledge"
+        },
+        {
+          "id": "direct",
+          "label": "Direct perception"
+        }
+      ],
+      "rows": [
+        {
+          "id": "source",
+          "label": "Primary source",
+          "values": {
+            "mapped": "Teaching, measurement, models, accumulated practice",
+            "direct": "Attention, experience, intuition, sensitivity to context"
+          }
+        },
+        {
+          "id": "strength",
+          "label": "Strength",
+          "values": {
+            "mapped": "Transferable and repeatable",
+            "direct": "Adaptive when the situation exceeds the existing model"
+          }
+        },
+        {
+          "id": "risk",
+          "label": "Risk",
+          "values": {
+            "mapped": "Mistaking the map for the limit",
+            "direct": "Mistaking impulse or confidence for perception"
+          }
+        }
+      ]
+    },
+    {
+      "id": "quote",
+      "type": "quote",
+      "text": "The documented map is not wrong. It simply does not guarantee that the territory ends at its border."
+    },
+    {
+      "id": "connections",
+      "type": "relationships",
+      "heading": "Related ideas"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "95-canvas",
+      "targetId": "obscured-canvas",
+      "label": "clarifies",
+      "summary": "Both distinguish useful knowledge from the assumption that knowledge is complete."
+    },
+    {
+      "id": "95-luminaries",
+      "targetId": "luminaries",
+      "label": "expressed through",
+      "summary": "Luminary practice treats disciplined perception as something that extends beyond formal description."
+    }
+  ],
+  "tags": [
+    "perception",
+    "knowledge",
+    "craft",
+    "intuition"
+  ]
+}
