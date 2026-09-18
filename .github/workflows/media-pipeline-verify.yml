@@ -1,0 +1,38 @@
+name: StoryForge Media Pipeline Verification
+
+on:
+  push:
+    branches:
+      - media-pipeline-v1
+    paths:
+      - ".github/workflows/media-pipeline-verify.yml"
+      - "scripts/verify-creator-publish.mjs"
+      - "scripts/content-admin.mjs"
+      - "vite.config.ts"
+      - "src/App.tsx"
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install
+        run: npm install --no-audit --no-fund
+
+      - name: Validate and build
+        run: npm run build
+
+      - name: Verify creator publish through public runtime
+        run: node scripts/verify-creator-publish.mjs

@@ -1,145 +1,163 @@
 # StoryForge content storage
 
-## Storage ownership
+## Active storage layout
 
-StoryForge separates engine code, structured content and media.
+StoryForge keeps the engine and content independent.
 
 ### GitHub
 
 Owns:
-- engine code
-- schemas
-- creator contracts
-- workflows
-- offline/PWA snapshot
-- optional content exports
+- StoryForge engine and schemas
+- authoring workflows
+- PWA/offline snapshot
+- published binary media while Firebase Storage billing is unavailable
 
 ### Firestore
 
 Owns live structured content:
+- published packages
+- private drafts
+- revision history
+- world theme / entry policy
+
+## Media backend
+
+StoryForge has a pluggable media backend.
+
+### Active now: GitHub published-media branch
+
+The Firebase project currently has no billing account attached, and Google Cloud Storage bucket creation returns:
 
 ```text
-storyworlds/
-  novasaga/
-    packages/<packageId>    ← published
-    drafts/<packageId>      ← private authoring
+billing account ... state absent
 ```
 
-### Cloud Storage
+Therefore StoryForge automatically uses a repository media driver without blocking creators.
 
-Owns binary creator media:
+Published media is copied to:
 
 ```text
-storyworlds/
-  novasaga/
-    drafts/<packageId>/...      ← private draft objects
-    packages/<packageId>/...    ← published objects
+published-media branch
+
+storyworld/
+  published-media/
+    novasaga/
+      <packageId>/
+        media/
+          ...
 ```
 
-## Media lifecycle
+Firestore stores stable `raw.githubusercontent.com` URLs to those published assets.
 
-Creator package:
+The PWA caches those published-media URLs for offline/repeat use.
+
+### Future: Firebase Storage
+
+The same content-admin pipeline already contains a `firebase-storage` backend.
+
+After billing/Blaze is enabled, set:
 
 ```text
-package.json
-media/
-  diagram.svg
-  portrait.webp
-  scene.webp
+STORYFORGE_MEDIA_BACKEND=firebase-storage
 ```
 
-The package can reference relative media:
+Creator package structure and Firestore documents do not change.
 
-```json
-{
-  "id": "hero",
-  "type": "image",
-  "src": "media/hero.webp",
-  "role": "hero"
-}
-```
+## Creator lifecycle
 
-When a draft is synced:
-
-1. package schema is validated
-2. relative media files are uploaded to the private draft Storage prefix
-3. Firestore draft media references become `gs://...`
-4. the browser cannot read the draft
-
-When published:
-
-1. draft media is copied into the published package prefix
-2. each published object receives a stable Firebase download token
-3. the published Firestore package is rewritten with HTTPS media URLs
-4. previous published Firestore revision is archived
-5. StoryForge can render the update immediately without web deployment
-
-Published media uses long immutable cache headers. Draft media is private/no-cache.
-
-## Creator agent: GitHub bridge
-
-Creator agents do not need Firebase credentials.
-
-Use a branch matching:
-
-```text
-content/<agent-or-topic>
-```
-
-and create:
+### 1. Create
 
 ```text
 storyworld/authoring/packages/<packageId>/
   package.json
   media/
+    image.webp
+    diagram.svg
     ...
 ```
 
-A push automatically writes that package to Firestore drafts and uploads its media.
+The package references media relatively:
 
-Publishing is separate. On a branch matching:
+```json
+{
+  "media": [
+    {
+      "id": "hero",
+      "type": "image",
+      "src": "media/hero.webp"
+    }
+  ]
+}
+```
+
+### 2. Draft
+
+Push on:
+
+```text
+content/<topic>
+```
+
+The draft workflow:
+- validates the package
+- records immutable creator-commit media URLs
+- writes the structured package to Firestore drafts
+
+### 3. Publish
+
+Push a publish request on:
 
 ```text
 publish/<topic>
 ```
 
-create/update:
+The publish workflow:
+- reads the Firestore draft
+- copies its media to the stable `published-media` branch
+- rewrites media URLs to the published location
+- archives the previous Firestore revision
+- writes the new published package
+
+No StoryForge frontend deployment is required.
+
+## Reader runtime
 
 ```text
-storyworld/authoring/publish/<packageId>.json
+online:
+  Firestore published package
+    + published media URL
+
+offline/source failure:
+  bundled PWA snapshot
 ```
 
-containing:
+Published media is cached by the PWA.
 
-```json
-{
-  "packageId": "<packageId>"
-}
-```
+## Direct package links
 
-The publish workflow promotes the Firestore draft and media to published state.
-
-## Creator agent: direct Admin SDK
-
-Agents already running with an authorized service account can use:
-
-```bash
-npm run content:list
-npm run content:admin -- get <packageId> published
-npm run content:admin -- put /path/to/package.json draft
-npm run content:admin -- publish <packageId>
-```
-
-## Runtime
+The generic reader supports:
 
 ```text
-online
-  → Firestore published packages
-  → published Cloud Storage URLs
-
-offline / source failure
-  → bundled PWA snapshot
-  → bundled snapshot media
+?package=<packageId>
 ```
 
-The reader never needs Firebase write credentials.
+This is useful for previewing an element that is intentionally hidden from the landing resolver.
+
+## Responsibility boundary
+
+Creator agents own:
+- text
+- generated media
+- theme
+- semantic blocks
+- relationships
+- entry hints
+
+StoryForge owns:
+- schemas
+- validation
+- draft/publish lifecycle
+- media persistence
+- composition
+- visualization
+- responsive/PWA behavior
