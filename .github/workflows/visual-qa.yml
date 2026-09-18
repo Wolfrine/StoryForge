@@ -1,0 +1,59 @@
+name: Visual QA Contact Sheet
+
+on:
+  push:
+    branches:
+      - design-v0.4
+  workflow_dispatch:
+
+jobs:
+  visual-qa:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install app dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install QA browser dependency
+        run: npm install --no-save playwright@1.55.0
+
+      - name: Validate and build
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start local preview
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/storyforge-preview.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173 >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/storyforge-preview.log
+          exit 1
+
+      - name: Capture one compressed QA contact sheet
+        run: node scripts/capture.mjs
+
+      - name: Upload only the contact sheet
+        uses: actions/upload-artifact@v4
+        with:
+          name: storyforge-qa-contact-sheet
+          path: qa-output/storyforge-qa-contact-sheet.jpg
+          if-no-files-found: error
+          retention-days: 2
+          compression-level: 6

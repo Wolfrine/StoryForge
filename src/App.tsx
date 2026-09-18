@@ -6,14 +6,20 @@ import { sampleWorld } from './content/loadWorld';
 
 type Mode = 'world' | 'atlas' | 'studio';
 
+const params = new URLSearchParams(window.location.search);
+const qaMode = params.get('qa') === '1';
+const requestedEntity = params.get('entity');
+const requestedMode = params.get('mode') as Mode | null;
+
 function App() {
-  const initialEntity =
+  const defaultEntity =
+    sampleWorld.entities.find((entity) => entity.id === requestedEntity) ??
     sampleWorld.entities.find((entity) => entity.kind === 'place') ??
     sampleWorld.entities[0];
 
-  const [selectedId, setSelectedId] = useState(initialEntity?.id ?? '');
-  const [mode, setMode] = useState<Mode>('world');
-  const [entered, setEntered] = useState(false);
+  const [selectedId, setSelectedId] = useState(defaultEntity?.id ?? '');
+  const [mode, setMode] = useState<Mode>(requestedMode ?? 'world');
+  const [entered, setEntered] = useState(qaMode || Boolean(requestedEntity) || Boolean(requestedMode));
 
   const selected = useMemo(
     () => sampleWorld.entities.find((entity) => entity.id === selectedId) ?? sampleWorld.entities[0],
