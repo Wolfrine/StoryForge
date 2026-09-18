@@ -55,8 +55,7 @@ jobs:
             exit 0
           fi
 
-          PACKAGE_DIRS=$(printf '%s
-' "$FILES" | awk -F/ 'NF >= 4 {print $1"/"$2"/"$3"/"$4}' | sort -u)
+          PACKAGE_DIRS=$(printf '%s\\n' "$FILES" | awk -F/ 'NF >= 4 {print $1"/"$2"/"$3"/"$4}' | sort -u)
 
           while IFS= read -r dir; do
             [ -z "$dir" ] && continue
