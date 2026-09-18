@@ -4,45 +4,181 @@
   "title": "StoryForge Entity",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "kind", "name", "status", "summary"],
+  "required": [
+    "id",
+    "kind",
+    "name",
+    "status",
+    "summary"
+  ],
   "properties": {
-    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
-    "kind": {
-      "enum": ["person", "place", "concept", "event", "faction", "object", "species", "story", "ability"]
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
     },
-    "name": { "type": "string", "minLength": 1 },
-    "subtitle": { "type": "string" },
-    "status": { "enum": ["canon", "developing", "legacy", "conflict"] },
-    "summary": { "type": "string", "minLength": 1 },
-    "body": { "type": "array", "items": { "type": "string" } },
-    "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "kind": {
+      "enum": [
+        "person",
+        "place",
+        "concept",
+        "event",
+        "faction",
+        "object",
+        "species",
+        "story",
+        "ability"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subtitle": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "canon",
+        "developing",
+        "legacy",
+        "conflict"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "body": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
     "visual": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "atmosphere": { "enum": ["serene", "tense", "mysterious", "warm", "austere", "playful"] },
-        "luminosity": { "enum": ["bright", "balanced", "dark"] },
-        "density": { "enum": ["spacious", "balanced", "dense"] },
-        "motion": { "enum": ["still", "gentle", "active"] },
-        "materiality": { "enum": ["natural", "architectural", "ethereal", "industrial"] }
+        "atmosphere": {
+          "enum": [
+            "serene",
+            "tense",
+            "mysterious",
+            "warm",
+            "austere",
+            "playful"
+          ]
+        },
+        "luminosity": {
+          "enum": [
+            "bright",
+            "balanced",
+            "dark"
+          ]
+        },
+        "density": {
+          "enum": [
+            "spacious",
+            "balanced",
+            "dense"
+          ]
+        },
+        "motion": {
+          "enum": [
+            "still",
+            "gentle",
+            "active"
+          ]
+        },
+        "materiality": {
+          "enum": [
+            "natural",
+            "architectural",
+            "ethereal",
+            "industrial"
+          ]
+        },
+        "sceneFamily": {
+          "enum": [
+            "landscape",
+            "portrait",
+            "rupture",
+            "ritual",
+            "civilization",
+            "abstract",
+            "distortion"
+          ]
+        }
       }
     },
     "meaning": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "tensions": { "type": "array", "items": { "type": "string" } },
-        "desiredFeelings": { "type": "array", "items": { "type": "string" } },
-        "questions": { "type": "array", "items": { "type": "string" } },
-        "realization": { "type": "string" },
-        "explicit": { "type": "boolean" }
+        "tensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "desiredFeelings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "realization": {
+          "type": "string"
+        },
+        "explicit": {
+          "type": "boolean"
+        }
       }
     },
-    "relationshipIds": { "type": "array", "items": { "type": "string" } },
-    "timeline": { "type": "array", "items": { "type": "object" } },
-    "process": { "type": "array", "items": { "type": "object" } },
-    "media": { "type": "array", "items": { "type": "object" } },
-    "sourceRefs": { "type": "array", "items": { "type": "object" } },
-    "metadata": { "type": "object" }
+    "relationshipIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "timeline": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "process": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "media": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "sourceRefs": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "metadata": {
+      "type": "object"
+    }
   }
 }

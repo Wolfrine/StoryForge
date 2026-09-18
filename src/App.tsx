@@ -1,13 +1,19 @@
 import { useMemo, useState } from 'react';
 import { ImmersiveEntity } from './components/ImmersiveEntity';
+import { Opening } from './components/Opening';
 import { WorldAtlas } from './components/WorldAtlas';
 import { sampleWorld } from './content/loadWorld';
 
 type Mode = 'world' | 'atlas' | 'studio';
 
 function App() {
-  const [selectedId, setSelectedId] = useState(sampleWorld.entities[0]?.id ?? '');
+  const initialEntity =
+    sampleWorld.entities.find((entity) => entity.kind === 'place') ??
+    sampleWorld.entities[0];
+
+  const [selectedId, setSelectedId] = useState(initialEntity?.id ?? '');
   const [mode, setMode] = useState<Mode>('world');
+  const [entered, setEntered] = useState(false);
 
   const selected = useMemo(
     () => sampleWorld.entities.find((entity) => entity.id === selectedId) ?? sampleWorld.entities[0],
@@ -17,6 +23,7 @@ function App() {
   const selectEntity = (id: string, enterWorld = true) => {
     const update = () => {
       setSelectedId(id);
+      setEntered(true);
       if (enterWorld) setMode(mode === 'studio' ? 'studio' : 'world');
     };
 
@@ -35,14 +42,18 @@ function App() {
     return <main className="empty-state">No storyworld entities are available.</main>;
   }
 
+  if (!entered) {
+    return <Opening world={sampleWorld} onEnter={(id) => selectEntity(id, true)} />;
+  }
+
   return (
     <main className="storyforge-shell">
       <header className="floating-chrome">
         <button
           className="wordmark"
           type="button"
-          onClick={() => setMode('world')}
-          aria-label="Return to current story thread"
+          onClick={() => setEntered(false)}
+          aria-label="Return to the opening"
         >
           <span>SF</span>
           <strong>StoryForge</strong>

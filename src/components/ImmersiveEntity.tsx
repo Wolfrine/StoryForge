@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 import type { Storyworld, StoryworldEntity } from '../domain/types';
 import { entityById, relationshipsFor } from '../domain/storyworld';
 import { resolveTheme } from '../engine/resolveTheme';
-import { AmbientField } from './AmbientField';
+import { SceneArtwork } from './SceneArtwork';
 
 interface Props {
   world: Storyworld;
@@ -11,18 +11,11 @@ interface Props {
   onSelectEntity: (id: string) => void;
 }
 
-const orbitPositions = [
-  { x: 8, y: 24 },
-  { x: 79, y: 17 },
-  { x: 86, y: 59 },
-  { x: 9, y: 68 },
-  { x: 45, y: 8 },
-  { x: 48, y: 82 }
-];
-
 export function ImmersiveEntity({ world, entity, studio, onSelectEntity }: Props) {
   const theme = resolveTheme(entity);
+  const family = entity.visual?.sceneFamily ?? 'abstract';
   const relationships = relationshipsFor(world, entity.id);
+
   const related = relationships
     .map((relationship) => {
       const otherId =
@@ -44,65 +37,63 @@ export function ImmersiveEntity({ world, entity, studio, onSelectEntity }: Props
   } as CSSProperties;
 
   return (
-    <article className={`immersive-entity kind-${entity.kind}`} style={style}>
-      <section className="world-stage">
-        <AmbientField entity={entity} />
+    <article
+      className={`immersive-entity scene-${family} kind-${entity.kind}`}
+      style={style}
+    >
+      <section className="cinematic-stage">
+        <div className="stage-art" aria-hidden="true">
+          <SceneArtwork entity={entity} />
+        </div>
+        <div className="stage-light" />
 
-        <div className="stage-coordinate stage-coordinate-left">
+        <div className="stage-meta">
           <span>{entity.kind}</span>
           <span>{entity.status}</span>
-        </div>
-
-        <div className="stage-coordinate stage-coordinate-right">
           <span>{world.name}</span>
-          <span>{world.version}</span>
         </div>
 
-        <div className="stage-copy">
-          <div className="stage-index">STORYWORLD / {entity.kind.toUpperCase()}</div>
+        <div className="stage-title">
+          <span className="stage-kicker">{entity.tags?.[0] ?? 'Storyworld thread'}</span>
           <h1>{entity.name}</h1>
-          {entity.subtitle && <p className="stage-subtitle">{entity.subtitle}</p>}
-          <p className="stage-summary">{entity.summary}</p>
-
-          {entity.tags?.length ? (
-            <div className="stage-tags">
-              {entity.tags.slice(0, 4).map((tag) => (
-                <span key={tag}>{tag}</span>
-              ))}
-            </div>
-          ) : null}
+          {entity.subtitle && <p>{entity.subtitle}</p>}
+          <a href="#deeper">Discover this thread <i>↓</i></a>
         </div>
 
-        <div className="orbit-navigation" aria-label="Connected story elements">
-          {related.slice(0, orbitPositions.length).map(({ entity: other, relationship }, index) => {
-            const position = orbitPositions[index] ?? orbitPositions[0]!;
-            return (
+        {related.length ? (
+          <div className="stage-threads" aria-label="Nearby story threads">
+            {related.slice(0, 3).map(({ entity: other, relationship }, index) => (
               <button
                 key={relationship.id}
                 type="button"
-                className="orbit-node"
-                style={{ left: `${position.x}%`, top: `${position.y}%` }}
                 onClick={() => onSelectEntity(other.id)}
               >
-                <span>{relationship.label}</span>
+                <span>{String(index + 1).padStart(2, '0')} · {relationship.label}</span>
                 <strong>{other.name}</strong>
               </button>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        ) : null}
 
-        <a className="descend-cue" href="#experience">
-          <span>enter this thread</span>
-          <i />
-        </a>
+        <div className="stage-caption">
+          <span>{entity.visual?.atmosphere ?? 'world'}</span>
+          <span>{entity.visual?.materiality ?? 'presence'}</span>
+        </div>
       </section>
 
-      <div id="experience" className="experience-flow">
+      <div id="deeper" className="story-layer">
+        <section className="meaning-entry">
+          <div className="meaning-label">What you notice first</div>
+          <p>{entity.summary}</p>
+        </section>
+
         {entity.body?.length ? (
-          <section className="prose-field">
-            <div className="section-number">01</div>
-            <div className="section-label">Presence</div>
-            <div className="prose-copy">
+          <section className="editorial-story">
+            <div className="editorial-aside">
+              <span>Presence</span>
+              <small>Stay with it before looking for an explanation.</small>
+            </div>
+            <div className="editorial-copy">
               {entity.body.map((paragraph, index) => (
                 <p className={index === 0 ? 'lead' : ''} key={paragraph}>
                   {paragraph}
@@ -113,23 +104,20 @@ export function ImmersiveEntity({ world, entity, studio, onSelectEntity }: Props
         ) : null}
 
         {entity.timeline?.length ? (
-          <section className="sequence-field">
-            <div className="section-number">02</div>
-            <div className="section-label">Trace through time</div>
-            <div className="sequence-line">
+          <section className="timeline-story">
+            <div className="story-heading">
+              <span>Trace through time</span>
+              <h2>Not one moment.<br />A sequence of consequences.</h2>
+            </div>
+            <div className="timeline-ribbon">
               {[...entity.timeline]
                 .sort((a, b) => a.order - b.order)
-                .map((item, index, all) => (
-                  <div className="sequence-moment" key={item.id}>
-                    <div className="moment-axis">
-                      <span>{String(index + 1).padStart(2, '0')}</span>
-                      {index < all.length - 1 && <i />}
-                    </div>
-                    <div className="moment-copy">
-                      {item.dateLabel && <small>{item.dateLabel}</small>}
-                      <h3>{item.title}</h3>
-                      {item.summary && <p>{item.summary}</p>}
-                    </div>
+                .map((item, index) => (
+                  <div className="timeline-beat" key={item.id}>
+                    <span>{String(index + 1).padStart(2, '0')}</span>
+                    {item.dateLabel && <small>{item.dateLabel}</small>}
+                    <h3>{item.title}</h3>
+                    {item.summary && <p>{item.summary}</p>}
                   </div>
                 ))}
             </div>
@@ -137,12 +125,14 @@ export function ImmersiveEntity({ world, entity, studio, onSelectEntity }: Props
         ) : null}
 
         {entity.process?.length ? (
-          <section className="ritual-field">
-            <div className="section-number">02</div>
-            <div className="section-label">How it unfolds</div>
-            <div className="ritual-track">
+          <section className="process-story">
+            <div className="story-heading">
+              <span>How it unfolds</span>
+              <h2>A rule only becomes real through what it asks of people.</h2>
+            </div>
+            <div className="process-path">
               {entity.process.map((step, index) => (
-                <div className="ritual-step" key={step.id}>
+                <div className="process-beat" key={step.id}>
                   <span>{String(index + 1).padStart(2, '0')}</span>
                   <div>
                     <h3>{step.title}</h3>
@@ -155,24 +145,23 @@ export function ImmersiveEntity({ world, entity, studio, onSelectEntity }: Props
         ) : null}
 
         {related.length ? (
-          <section className="thread-field">
-            <div className="section-number">
-              {entity.timeline?.length || entity.process?.length ? '03' : '02'}
+          <section className="connections-story">
+            <div className="story-heading">
+              <span>Follow what touches this</span>
+              <h2>The world is not organised into chapters.</h2>
             </div>
-            <div className="section-label">Threads leaving here</div>
-            <div className="thread-list">
+            <div className="connection-lines">
               {related.map(({ entity: other, relationship }, index) => (
                 <button
-                  className="thread-row"
                   type="button"
                   key={relationship.id}
                   onClick={() => onSelectEntity(other.id)}
                 >
-                  <span className="thread-order">{String(index + 1).padStart(2, '0')}</span>
-                  <span className="thread-relation">{relationship.label}</span>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <small>{relationship.label}</small>
                   <strong>{other.name}</strong>
-                  <span className="thread-kind">{other.kind}</span>
-                  <span className="thread-arrow">↗</span>
+                  <em>{other.kind}</em>
+                  <i>↗</i>
                 </button>
               ))}
             </div>
@@ -180,39 +169,35 @@ export function ImmersiveEntity({ world, entity, studio, onSelectEntity }: Props
         ) : null}
 
         {studio ? (
-          <section className="studio-field">
-            <div className="studio-heading">
+          <section className="studio-layer">
+            <div className="story-heading">
               <span>Studio layer</span>
-              <strong>What the reader should never be told directly.</strong>
+              <h2>The machinery underneath the feeling.</h2>
             </div>
-
-            <div className="studio-grid">
+            <div className="studio-columns">
               {entity.meaning?.tensions?.length ? (
                 <div>
                   <small>Tensions</small>
                   <p>{entity.meaning.tensions.join(' / ')}</p>
                 </div>
               ) : null}
-
               {entity.meaning?.desiredFeelings?.length ? (
                 <div>
                   <small>Desired emotional movement</small>
                   <p>{entity.meaning.desiredFeelings.join(' → ')}</p>
                 </div>
               ) : null}
-
               {entity.meaning?.realization ? (
                 <div>
                   <small>Underlying realization</small>
                   <p>{entity.meaning.realization}</p>
                 </div>
               ) : null}
-
               {entity.sourceRefs?.length ? (
-                <div className="studio-sources">
+                <div>
                   <small>Provenance</small>
                   {entity.sourceRefs.map((source) => (
-                    <p key={source.id}>
+                    <p className="source-note" key={source.id}>
                       <strong>{source.label}</strong>
                       <span>{source.kind}</span>
                     </p>
@@ -223,9 +208,9 @@ export function ImmersiveEntity({ world, entity, studio, onSelectEntity }: Props
           </section>
         ) : null}
 
-        {related.length ? (
-          <section className="next-thread">
-            <span>Continue wandering</span>
+        {related[0] ? (
+          <section className="continue-story">
+            <span>Let the world pull you sideways</span>
             <button type="button" onClick={() => onSelectEntity(related[0]!.entity.id)}>
               <small>{related[0]!.relationship.label}</small>
               <strong>{related[0]!.entity.name}</strong>

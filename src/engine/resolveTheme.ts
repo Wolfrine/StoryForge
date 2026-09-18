@@ -1,44 +1,70 @@
-import type { StoryworldEntity, VisualIdentity } from '../domain/types';
+import type { StoryworldEntity } from '../domain/types';
 import type { ThemeTokens } from './types';
 
-const base: ThemeTokens = {
-  background: '#0b0d12',
-  surface: '#11151d',
-  surfaceStrong: '#171d28',
-  text: '#f4f5f7',
-  muted: '#a3acbb',
-  border: '#2a3342',
-  accent: '#aebed8',
-  accentSoft: 'rgba(174, 190, 216, 0.14)'
-};
-
-const atmosphereAccent: Record<NonNullable<VisualIdentity['atmosphere']>, [string, string]> = {
-  serene: ['#b9d9d1', 'rgba(185, 217, 209, 0.14)'],
-  tense: ['#d6a5a5', 'rgba(214, 165, 165, 0.14)'],
-  mysterious: ['#b8addb', 'rgba(184, 173, 219, 0.14)'],
-  warm: ['#e2c89c', 'rgba(226, 200, 156, 0.14)'],
-  austere: ['#b9c1cd', 'rgba(185, 193, 205, 0.12)'],
-  playful: ['#dbc2a7', 'rgba(219, 194, 167, 0.14)']
+const themes: Record<string, ThemeTokens> = {
+  warm: {
+    background: '#f7ecdc',
+    surface: '#fffaf1',
+    surfaceStrong: '#ffffff',
+    text: '#263947',
+    muted: '#63737e',
+    border: '#d9cbbb',
+    accent: '#b85f42',
+    accentSoft: 'rgba(184, 95, 66, 0.13)'
+  },
+  serene: {
+    background: '#e8f3f0',
+    surface: '#f7fbfa',
+    surfaceStrong: '#ffffff',
+    text: '#1f4148',
+    muted: '#5e777a',
+    border: '#c5d9d5',
+    accent: '#2f847d',
+    accentSoft: 'rgba(47, 132, 125, 0.12)'
+  },
+  mysterious: {
+    background: '#eeeaf6',
+    surface: '#f9f7fc',
+    surfaceStrong: '#ffffff',
+    text: '#302d48',
+    muted: '#6e6885',
+    border: '#d3cce1',
+    accent: '#725da8',
+    accentSoft: 'rgba(114, 93, 168, 0.12)'
+  },
+  tense: {
+    background: '#f3eae2',
+    surface: '#fbf6f1',
+    surfaceStrong: '#ffffff',
+    text: '#362f31',
+    muted: '#776867',
+    border: '#dccac2',
+    accent: '#bd4f3f',
+    accentSoft: 'rgba(189, 79, 63, 0.12)'
+  },
+  austere: {
+    background: '#eceae4',
+    surface: '#f7f5f0',
+    surfaceStrong: '#ffffff',
+    text: '#303638',
+    muted: '#6e7475',
+    border: '#d2d0c8',
+    accent: '#69757c',
+    accentSoft: 'rgba(105, 117, 124, 0.11)'
+  },
+  playful: {
+    background: '#fff0d7',
+    surface: '#fff8ec',
+    surfaceStrong: '#ffffff',
+    text: '#463a34',
+    muted: '#806e63',
+    border: '#e6d0ad',
+    accent: '#d07743',
+    accentSoft: 'rgba(208, 119, 67, 0.13)'
+  }
 };
 
 export function resolveTheme(entity: StoryworldEntity): ThemeTokens {
-  const tokens = { ...base };
-  const atmosphere = entity.visual?.atmosphere;
-
-  if (atmosphere) {
-    const [accent, accentSoft] = atmosphereAccent[atmosphere];
-    tokens.accent = accent;
-    tokens.accentSoft = accentSoft;
-  }
-
-  if (entity.visual?.luminosity === 'bright') {
-    tokens.background = '#f1efe9';
-    tokens.surface = '#f8f6f1';
-    tokens.surfaceStrong = '#ffffff';
-    tokens.text = '#20242c';
-    tokens.muted = '#667080';
-    tokens.border = '#d7d4cc';
-  }
-
-  return tokens;
+  const atmosphere = entity.visual?.atmosphere ?? 'serene';
+  return { ...themes[atmosphere] };
 }

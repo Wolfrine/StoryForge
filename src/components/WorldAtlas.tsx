@@ -12,25 +12,24 @@ interface Point {
   id: string;
   x: number;
   y: number;
-  angle: number;
 }
 
 const kindRadius: Record<string, number> = {
-  faction: 235,
-  event: 285,
-  concept: 185,
-  place: 315,
-  person: 350,
+  faction: 228,
+  event: 300,
+  concept: 182,
+  place: 322,
+  person: 360,
   story: 260,
-  object: 220,
+  object: 240,
   species: 300,
-  ability: 245
+  ability: 246
 };
 
 export function WorldAtlas({ world, selectedId, onSelectEntity, onExit }: Props) {
   const points = useMemo<Point[]>(() => {
     const centerX = 600;
-    const centerY = 365;
+    const centerY = 390;
     const count = Math.max(world.entities.length, 1);
 
     return world.entities.map((entity, index) => {
@@ -38,9 +37,8 @@ export function WorldAtlas({ world, selectedId, onSelectEntity, onExit }: Props)
       const radius = kindRadius[entity.kind] ?? 280;
       return {
         id: entity.id,
-        angle,
         x: centerX + Math.cos(angle) * radius,
-        y: centerY + Math.sin(angle) * radius * 0.74
+        y: centerY + Math.sin(angle) * radius * 0.72
       };
     });
   }, [world.entities]);
@@ -50,48 +48,34 @@ export function WorldAtlas({ world, selectedId, onSelectEntity, onExit }: Props)
 
   return (
     <section className="atlas-shell">
-      <div className="atlas-atmosphere" aria-hidden="true">
-        <i />
-        <i />
-        <i />
-      </div>
-
+      <div className="atlas-paper" aria-hidden="true" />
       <div className="atlas-heading">
-        <span>StoryForge / World Atlas</span>
-        <h2>{world.name}</h2>
-        <p>There is no required reading order. Enter through any thread.</p>
+        <span>Atlas / {world.name}</span>
+        <h2>Everything touches something else.</h2>
+        <p>Select a thread, then enter it. There is no required reading order.</p>
       </div>
 
       <button className="atlas-exit" type="button" onClick={onExit}>
-        Return to world
+        Return to current thread
       </button>
 
       <div className="atlas-canvas-wrap">
-        <svg className="atlas-canvas" viewBox="0 0 1200 730" role="img" aria-label="Storyworld relationship atlas">
-          <defs>
-            <radialGradient id="atlas-glow">
-              <stop offset="0%" stopColor="currentColor" stopOpacity="0.16" />
-              <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-
-          <circle className="atlas-ring ring-a" cx="600" cy="365" r="165" />
-          <ellipse className="atlas-ring ring-b" cx="600" cy="365" rx="312" ry="225" />
-          <ellipse className="atlas-ring ring-c" cx="600" cy="365" rx="450" ry="300" />
+        <svg className="atlas-canvas" viewBox="0 0 1200 780" role="img" aria-label="Storyworld relationship atlas">
+          <circle className="atlas-ring" cx="600" cy="390" r="160" />
+          <ellipse className="atlas-ring" cx="600" cy="390" rx="310" ry="224" />
+          <ellipse className="atlas-ring" cx="600" cy="390" rx="455" ry="308" />
 
           {world.relationships.map((relationship) => {
             const source = byId.get(relationship.sourceId);
             const target = byId.get(relationship.targetId);
             if (!source || !target) return null;
+            const active =
+              relationship.sourceId === selectedId || relationship.targetId === selectedId;
 
             return (
               <line
                 key={relationship.id}
-                className={
-                  relationship.sourceId === selectedId || relationship.targetId === selectedId
-                    ? 'atlas-link active'
-                    : 'atlas-link'
-                }
+                className={active ? 'atlas-link active' : 'atlas-link'}
                 x1={source.x}
                 y1={source.y}
                 x2={target.x}
@@ -100,13 +84,8 @@ export function WorldAtlas({ world, selectedId, onSelectEntity, onExit }: Props)
             );
           })}
 
-          <circle className="atlas-center-glow" cx="600" cy="365" r="138" fill="url(#atlas-glow)" />
-          <text className="atlas-center-label" x="600" y="356" textAnchor="middle">
-            STORYWORLD
-          </text>
-          <text className="atlas-center-name" x="600" y="390" textAnchor="middle">
-            {world.name}
-          </text>
+          <text className="atlas-center-small" x="600" y="380" textAnchor="middle">WORLD</text>
+          <text className="atlas-center-name" x="600" y="416" textAnchor="middle">{world.name}</text>
 
           {points.map((point) => {
             const entity = world.entities.find((candidate) => candidate.id === point.id);
@@ -115,8 +94,8 @@ export function WorldAtlas({ world, selectedId, onSelectEntity, onExit }: Props)
 
             return (
               <g
-                className={active ? 'atlas-node active' : 'atlas-node'}
                 key={entity.id}
+                className={active ? `atlas-node active kind-${entity.kind}` : `atlas-node kind-${entity.kind}`}
                 role="button"
                 tabIndex={0}
                 transform={`translate(${point.x} ${point.y})`}
@@ -128,14 +107,10 @@ export function WorldAtlas({ world, selectedId, onSelectEntity, onExit }: Props)
                   }
                 }}
               >
-                <circle r={active ? 26 : 18} />
-                <circle className="atlas-node-core" r={4} />
-                <text className="atlas-node-kind" y={active ? 46 : 38} textAnchor="middle">
-                  {entity.kind.toUpperCase()}
-                </text>
-                <text className="atlas-node-name" y={active ? 66 : 57} textAnchor="middle">
-                  {entity.name}
-                </text>
+                <circle r={active ? 29 : 20} />
+                <circle className="node-core" r="4" />
+                <text className="node-kind" y={active ? 49 : 41} textAnchor="middle">{entity.kind}</text>
+                <text className="node-name" y={active ? 69 : 61} textAnchor="middle">{entity.name}</text>
               </g>
             );
           })}
@@ -151,10 +126,10 @@ export function WorldAtlas({ world, selectedId, onSelectEntity, onExit }: Props)
             onExit();
           }}
         >
-          <span>Selected thread</span>
+          <span>Selected thread · {selected.kind}</span>
           <strong>{selected.name}</strong>
           <small>{selected.summary}</small>
-          <i>enter ↗</i>
+          <i>Enter thread ↗</i>
         </button>
       ) : null}
     </section>

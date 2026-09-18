@@ -1,91 +1,50 @@
-# StoryForge Engine v0.2
+# StoryForge Engine v0.3
 
-## Purpose
+## Principle
 
-StoryForge turns structured storyworld data into an automatically composed visual experience.
+StoryForge does not render lore as pages. It renders structured world information as scenes.
 
-It is not a dashboard and not an encyclopedia with decorated pages. Navigation is part of the world itself.
+The creator describes what an element means, how it relates to other elements and the emotional/visual cues attached to it. The engine decides how to compose the experience.
 
-The system answers two different questions:
+## Experience grammar
 
-- Visualization Engine: what representation best expresses the available information?
-- Experience Engine: how should the reader encounter and move through that information?
+1. Guided opening — the reader enters through a place, person or rupture.
+2. Visual scene — image/scene dominates the first impression.
+3. Sparse cue — title and one emotional line, not an encyclopedia summary.
+4. Progressive depth — explanation appears only after the reader chooses to descend.
+5. Sideways movement — related entities are available as threads rather than menu items.
+6. Atlas — unrestricted world-graph exploration.
+7. Studio — meaning, emotional intent and provenance become visible to creators only.
 
-## V0.2 experience grammar
+## Generic scene families
 
-The first shell deliberately removes permanent menus and entity lists.
+- landscape
+- portrait
+- rupture
+- ritual
+- civilization
+- abstract
+- distortion
 
-### World mode
+These are reusable visualization strategies, not entity-specific implementations.
 
-The selected entity becomes a visual stage.
+A future media resolver can supersede or blend these with high-quality generated images, video, maps or 3D while preserving the same content contract.
 
-- atmosphere is generated from semantic visual metadata
-- nearby relationships become spatial entry points
-- the reader descends into narrative, chronology, process and connected threads
-- there is no required chapter order
+## Design direction
 
-### Atlas mode
+- living / luminous / organic foundation
+- cinematic / editorial presentation
+- surreal / conceptual only where meaning calls for it
+- imagery generally owns 60–80% of the first impression
+- no global dark-lore theme
+- no permanent side navigation
+- no requirement that all entity types share the same composition
 
-The world graph itself becomes navigation.
+## Validation
 
-- entities are nodes
-- relationships are visible edges
-- selecting a node changes the active thread
-- entering the node returns to immersive World mode
+Every production build verifies:
+- unique entity IDs
+- valid relationship endpoints
+- world identity/version fields
 
-### Studio mode
-
-The same experience is retained, but hidden authoring information becomes visible:
-
-- meaning/tension metadata
-- desired emotional movement
-- underlying realization
-- provenance
-
-## Visual grammar in v0.2
-
-1. Semantic ambient field
-2. Focal story stage
-3. Spatial relationship orbit
-4. Narrative field
-5. Temporal trace
-6. Process / ritual sequence
-7. Thread field
-8. World Atlas graph
-9. Studio meaning layer
-10. Studio provenance layer
-
-No visual module is named after a specific NovaSaga entity.
-
-## Data pipeline
-
-Structured storyworld data
-→ integrity validation
-→ relationship resolution
-→ semantic theme resolution
-→ type-aware visual grammar
-→ immersive composition
-→ reader / atlas / studio experience
-
-## Semantic theming
-
-Content supplies cues such as:
-
-- atmosphere
-- luminosity
-- density
-- motion
-- materiality
-
-The engine converts those cues into presentation. Content must not supply CSS values or layout instructions.
-
-## Next engine milestones
-
-- persistent media model and image pipeline
-- richer visualizers by entity type
-- real map visualizer
-- spoiler and discovery state
-- narrative reveal conditions
-- source adapters for NovaSaga and curated content
-- search that returns entry points rather than document hits
-- richer graph layout and relationship semantics
+Full JSON Schema validation is a later hardening step.

@@ -13,6 +13,15 @@ export type CanonState = 'canon' | 'developing' | 'legacy' | 'conflict';
 
 export type ExperienceDepth = 'overview' | 'explore' | 'deep';
 
+export type SceneFamily =
+  | 'landscape'
+  | 'portrait'
+  | 'rupture'
+  | 'ritual'
+  | 'civilization'
+  | 'abstract'
+  | 'distortion';
+
 export interface SourceRef {
   id: string;
   label: string;
@@ -27,6 +36,7 @@ export interface VisualIdentity {
   density?: 'spacious' | 'balanced' | 'dense';
   motion?: 'still' | 'gentle' | 'active';
   materiality?: 'natural' | 'architectural' | 'ethereal' | 'industrial';
+  sceneFamily?: SceneFamily;
 }
 
 export interface MeaningModel {

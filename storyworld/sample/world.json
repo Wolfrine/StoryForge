@@ -1,7 +1,7 @@
 {
   "id": "novasaga-sample",
   "name": "NovaSaga",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "entities": [
     {
       "id": "luminaries",
@@ -14,17 +14,29 @@
         "Luminaries do not define themselves through spectacle. Their central discipline is restraint: observe first, understand the field, and intervene only when the action preserves agency rather than replacing it.",
         "Their hidden settlements, outposts and cultural practices exist to sustain knowledge that can become dangerous when stripped of responsibility."
       ],
-      "tags": ["balance", "restraint", "hidden order"],
+      "tags": [
+        "balance",
+        "restraint",
+        "hidden order"
+      ],
       "visual": {
         "atmosphere": "mysterious",
         "luminosity": "dark",
         "density": "spacious",
         "motion": "gentle",
-        "materiality": "natural"
+        "materiality": "natural",
+        "sceneFamily": "civilization"
       },
       "meaning": {
-        "tensions": ["power vs restraint", "guidance vs control"],
-        "desiredFeelings": ["curiosity", "trust", "awe without worship"],
+        "tensions": [
+          "power vs restraint",
+          "guidance vs control"
+        ],
+        "desiredFeelings": [
+          "curiosity",
+          "trust",
+          "awe without worship"
+        ],
         "realization": "Greater capability increases responsibility rather than entitlement.",
         "explicit": false
       },
@@ -76,17 +88,29 @@
           "summary": "Lineage is revealed only when the person is genuinely ready."
         }
       ],
-      "tags": ["selection", "character", "agency"],
+      "tags": [
+        "selection",
+        "character",
+        "agency"
+      ],
       "visual": {
         "atmosphere": "austere",
         "luminosity": "dark",
         "density": "balanced",
         "motion": "still",
-        "materiality": "architectural"
+        "materiality": "architectural",
+        "sceneFamily": "ritual"
       },
       "meaning": {
-        "tensions": ["inheritance vs earned character", "love vs duty"],
-        "desiredFeelings": ["unease", "respect", "reflection"],
+        "tensions": [
+          "inheritance vs earned character",
+          "love vs duty"
+        ],
+        "desiredFeelings": [
+          "unease",
+          "respect",
+          "reflection"
+        ],
         "realization": "Being born near power does not make someone worthy of it.",
         "explicit": false
       },
@@ -136,17 +160,29 @@
           "summary": "Communities reorganize around water, food, trust and practical knowledge."
         }
       ],
-      "tags": ["world event", "collapse", "ambiguity"],
+      "tags": [
+        "world event",
+        "collapse",
+        "ambiguity"
+      ],
       "visual": {
         "atmosphere": "tense",
         "luminosity": "dark",
         "density": "balanced",
         "motion": "active",
-        "materiality": "industrial"
+        "materiality": "industrial",
+        "sceneFamily": "rupture"
       },
       "meaning": {
-        "tensions": ["dependence vs capability", "panic vs cooperation"],
-        "desiredFeelings": ["disorientation", "scale", "human vulnerability"],
+        "tensions": [
+          "dependence vs capability",
+          "panic vs cooperation"
+        ],
+        "desiredFeelings": [
+          "disorientation",
+          "scale",
+          "human vulnerability"
+        ],
         "realization": "When scaffolding disappears, character and local capability become visible.",
         "explicit": false
       },
@@ -176,17 +212,29 @@
         "A Dark Being amplifies what is already present in people and places. Fear becomes easier to sustain, despair becomes environmental, and conflict feeds the next conflict.",
         "The Luminary answer is restoration where possible: weaken the feeding loop, bind safely, and attempt to recover the human underneath."
       ],
-      "tags": ["adversary", "corruption", "restoration"],
+      "tags": [
+        "adversary",
+        "corruption",
+        "restoration"
+      ],
       "visual": {
         "atmosphere": "tense",
         "luminosity": "dark",
         "density": "dense",
         "motion": "active",
-        "materiality": "ethereal"
+        "materiality": "ethereal",
+        "sceneFamily": "distortion"
       },
       "meaning": {
-        "tensions": ["justice vs restoration", "victim vs threat"],
-        "desiredFeelings": ["fear", "pity", "moral discomfort"],
+        "tensions": [
+          "justice vs restoration",
+          "victim vs threat"
+        ],
+        "desiredFeelings": [
+          "fear",
+          "pity",
+          "moral discomfort"
+        ],
         "realization": "Destroying a carrier does not necessarily resolve the cause.",
         "explicit": false
       },
@@ -240,17 +288,29 @@
           "summary": "Their attempt to return home changes when they encounter the settlement."
         }
       ],
-      "tags": ["community", "water", "belonging"],
+      "tags": [
+        "community",
+        "water",
+        "belonging"
+      ],
       "visual": {
         "atmosphere": "warm",
         "luminosity": "bright",
         "density": "spacious",
         "motion": "gentle",
-        "materiality": "natural"
+        "materiality": "natural",
+        "sceneFamily": "landscape"
       },
       "meaning": {
-        "tensions": ["home vs destination", "scarcity vs kindness"],
-        "desiredFeelings": ["relief", "belonging", "quiet wonder"],
+        "tensions": [
+          "home vs destination",
+          "scarcity vs kindness"
+        ],
+        "desiredFeelings": [
+          "relief",
+          "belonging",
+          "quiet wonder"
+        ],
         "realization": "A place can become home through the quality of relationships rather than origin.",
         "explicit": false
       },
@@ -280,17 +340,29 @@
         "Lucas is defeated by scale rather than cruelty. The more he helps, the more clearly he sees the remaining need.",
         "His arc is not about learning to care less. It is about learning that feeling another person's pain does not create an obligation to personally solve everything."
       ],
-      "tags": ["Sunset Moonland", "Brazil", "empathy"],
+      "tags": [
+        "Sunset Moonland",
+        "Brazil",
+        "empathy"
+      ],
       "visual": {
         "atmosphere": "warm",
         "luminosity": "balanced",
         "density": "spacious",
         "motion": "gentle",
-        "materiality": "natural"
+        "materiality": "natural",
+        "sceneFamily": "portrait"
       },
       "meaning": {
-        "tensions": ["compassion vs self-erasure", "helping vs fixing"],
-        "desiredFeelings": ["empathy", "frustration", "admiration"],
+        "tensions": [
+          "compassion vs self-erasure",
+          "helping vs fixing"
+        ],
+        "desiredFeelings": [
+          "empathy",
+          "frustration",
+          "admiration"
+        ],
         "realization": "Feeling deeply does not require carrying everything.",
         "explicit": false
       },
@@ -314,17 +386,29 @@
         "Teo can find an angle through almost any individual interaction, but a bureaucracy has no emotional state for him to read.",
         "Where Lucas absorbs pain, Teo converts patterns into movement. Their friendship works because each corrects the other's blind spot."
       ],
-      "tags": ["Sunset Moonland", "Brazil", "connection"],
+      "tags": [
+        "Sunset Moonland",
+        "Brazil",
+        "connection"
+      ],
       "visual": {
         "atmosphere": "serene",
         "luminosity": "balanced",
         "density": "balanced",
         "motion": "gentle",
-        "materiality": "natural"
+        "materiality": "natural",
+        "sceneFamily": "portrait"
       },
       "meaning": {
-        "tensions": ["connection vs systems", "navigation vs grounding"],
-        "desiredFeelings": ["confidence", "curiosity", "affection"],
+        "tensions": [
+          "connection vs systems",
+          "navigation vs grounding"
+        ],
+        "desiredFeelings": [
+          "confidence",
+          "curiosity",
+          "affection"
+        ],
         "realization": "Reading people becomes most powerful where the system is built from relationships.",
         "explicit": false
       },
@@ -334,6 +418,52 @@
           "label": "Character Architecture · Lucas & Teo",
           "kind": "notion",
           "note": "Developing character source."
+        }
+      ]
+    },
+    {
+      "id": "obscured-canvas",
+      "kind": "concept",
+      "name": "The Obscured Canvas",
+      "subtitle": "The map became so dense that people forgot there was paper underneath.",
+      "status": "canon",
+      "summary": "Human knowledge, belief, science, religion and culture accumulate like marks on a white page until the marks are mistaken for reality itself.",
+      "body": [
+        "The canvas is not an argument against knowledge. The dots are real, useful and often beautiful. The problem begins when their density makes the unmarked space impossible to perceive.",
+        "Luminaries are not omniscient. They are trained to notice the white between the marks: the difference between what has been mapped and what reality may still contain."
+      ],
+      "tags": [
+        "perception",
+        "knowledge",
+        "white space"
+      ],
+      "visual": {
+        "atmosphere": "mysterious",
+        "luminosity": "bright",
+        "density": "spacious",
+        "motion": "gentle",
+        "materiality": "ethereal",
+        "sceneFamily": "abstract"
+      },
+      "meaning": {
+        "tensions": [
+          "knowledge vs reality",
+          "map vs territory"
+        ],
+        "desiredFeelings": [
+          "recognition",
+          "curiosity",
+          "cognitive release"
+        ],
+        "realization": "The model can be correct without being complete.",
+        "explicit": false
+      },
+      "sourceRefs": [
+        {
+          "id": "canvas-source-1",
+          "label": "Luminary Codex · The Obscured Canvas",
+          "kind": "notion",
+          "note": "Canonical concept source."
         }
       ]
     }
@@ -394,6 +524,22 @@
       "type": "journey",
       "label": "finds fit",
       "description": "A community built through relationships matches the way he naturally navigates."
+    },
+    {
+      "id": "rel-lum-canvas",
+      "sourceId": "luminaries",
+      "targetId": "obscured-canvas",
+      "type": "worldview",
+      "label": "perceive beyond",
+      "description": "Luminary discipline includes noticing what existing maps leave unrepresented."
+    },
+    {
+      "id": "rel-canvas-cess",
+      "sourceId": "obscured-canvas",
+      "targetId": "cessation",
+      "type": "metaphor",
+      "label": "cleared by",
+      "description": "The Cessation strips away a dense layer of dependence and certainty."
     }
   ]
 }
