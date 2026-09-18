@@ -4,31 +4,24 @@ StoryForge is a visualization engine. It is not a content author and it is not a
 
 ## Creator agents
 
-Creator agents own story packages.
+Creator agents own story packages and media.
 
-Each ordinary story element lives independently:
+Preferred authoring structure:
 
 ```text
-storyworld/<world>/
-  world.json
-  packages/
-    <stable-id>/
-      package.json
-      media/
-        ...
+storyworld/authoring/packages/<stable-id>/
+  package.json
+  media/
+    ...
 ```
-
-Adding a package folder is enough. The compiler discovers it automatically.
 
 Creator agents may:
 - write and revise text
 - generate/select images, video, audio and 3D assets
-- save those assets in the package's media folder or reference a supported external asset
 - define the package theme
 - create semantic content blocks
 - create relationships to other package IDs
-- set entry priority when an element should be easier to discover
-- decide whether a package is hidden or featured
+- set entry priority, featured or hidden state
 
 Creator agents must not:
 - create React components for individual story elements
@@ -36,7 +29,47 @@ Creator agents must not:
 - depend on one fixed frontend layout
 - edit the engine to make their package render
 
-A creator should be able to add a new person, place, event, concept or story without modifying application code or a central package registry.
+### Draft
+
+Push package/media changes on a branch matching:
+
+```text
+content/<topic>
+```
+
+The workflow validates and writes the package to Firestore drafts.
+
+### Publish
+
+Create a publish request on:
+
+```text
+publish/<topic>
+```
+
+The workflow:
+- reads the Firestore draft
+- promotes its media
+- archives the previous published revision
+- writes the new published package
+
+No frontend deployment is required.
+
+## Media
+
+Relative media references are part of the creator contract:
+
+```json
+{
+  "id": "hero",
+  "type": "image",
+  "src": "media/hero.webp"
+}
+```
+
+StoryForge owns persistence.
+
+The active backend is the repository `published-media` branch because Firebase Storage requires project billing. A Firebase Storage driver is already implemented and can replace the backend later without changing package structure.
 
 ## Engine agents
 
@@ -45,12 +78,11 @@ Engine agents own reusable rendering behavior.
 They may:
 - extend schemas
 - add generic block renderers
-- improve the compiler
 - improve entry resolution
 - improve composition rules
-- improve responsive behavior
-- add reusable visualization primitives such as maps, timelines, graphs and galleries
-- improve asset loading, transitions and accessibility
+- improve responsive/PWA behavior
+- improve media persistence
+- add reusable visualization primitives
 
 Engine agents must not:
 - create entity-specific components
@@ -73,7 +105,7 @@ Correct:
 
 ## Theme ownership
 
-Themes come from creator packages. StoryForge interprets them; it does not author them.
+Themes come from creator packages. StoryForge interprets them.
 
 The runtime currently understands:
 - palette
@@ -84,9 +116,9 @@ The runtime currently understands:
 
 ## Landing
 
-The landing is a stable centered engine surface.
+The landing remains a stable centered engine surface.
 
-It never becomes a growing menu. As the world expands, the Entry Resolver selects a bounded number of directions using:
+As content grows, the Entry Resolver keeps a bounded number of directions using:
 - creator priority
 - featured status
 - content richness
@@ -94,14 +126,8 @@ It never becomes a growing menu. As the world expands, the Entry Resolver select
 - relationship richness
 - type diversity
 
-## Build/compiler contract
-
-`scripts/compile-world.mjs` discovers every package directory and generates the runtime world consumed by the web app.
-
-Creators never edit the generated runtime file.
-
 ## Fallback behavior
 
 Valid content must always render.
 
-Missing optional media, theme fields or specialized visualizations must degrade to a neutral StoryForge fallback rather than requiring frontend work.
+Missing optional media, theme fields or specialized visualizations degrade to neutral engine behavior rather than requiring frontend work.
