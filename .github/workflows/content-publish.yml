@@ -1,0 +1,63 @@
+name: StoryForge Publish Draft
+
+on:
+  push:
+    branches:
+      - "publish/**"
+    paths:
+      - "storyworld/authoring/publish/*.json"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install
+        run: npm install --no-audit --no-fund
+
+      - name: Prepare Firebase credentials
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "${{ runner.temp }}/firebase-service-account.json"
+
+      - name: Publish requested drafts
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
+          FIREBASE_PROJECT_ID: lumio-forge
+          STORYFORGE_WORLD_ID: novasaga
+          STORYFORGE_AGENT_ID: github:${{ github.actor }}
+        run: |
+          set -euo pipefail
+
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            FILES=$(git diff --name-only HEAD^ HEAD -- 'storyworld/authoring/publish/*.json')
+          else
+            FILES=$(git ls-files 'storyworld/authoring/publish/*.json')
+          fi
+
+          if [ -z "$FILES" ]; then
+            echo "No publish requests."
+            exit 0
+          fi
+
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            PACKAGE_ID=$(node -e "const fs=require('fs'); const v=JSON.parse(fs.readFileSync(process.argv[1],'utf8')); if(!v.packageId) process.exit(2); process.stdout.write(v.packageId)" "$file")
+            echo "Publishing: $PACKAGE_ID"
+            npm run content:admin -- publish "$PACKAGE_ID"
+          done <<< "$FILES"
