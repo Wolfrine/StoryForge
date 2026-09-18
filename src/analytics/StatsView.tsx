@@ -9,10 +9,20 @@ import {
 interface PackageMetrics {
   id: string;
   views: number;
+  impressions: number;
   dwellMs: number;
   maxDepth: number;
   entryClicks: number;
   relationshipClicks: number;
+  blockExposures: number;
+  blockCount: number;
+}
+
+interface Signal {
+  packageId: string;
+  tone: 'positive' | 'watch' | 'neutral';
+  title: string;
+  evidence: string;
 }
 
 export function StatsView() {
@@ -31,16 +41,33 @@ export function StatsView() {
       const created: PackageMetrics = {
         id,
         views: 0,
+        impressions: 0,
         dwellMs: 0,
         maxDepth: 0,
         entryClicks: 0,
-        relationshipClicks: 0
+        relationshipClicks: 0,
+        blockExposures: 0,
+        blockCount: 0
       };
       packages.set(id, created);
       return created;
     };
 
     for (const event of events) {
+      if (event.name === 'landing_view') {
+        const ids =
+          typeof event.properties.direction_ids === 'string'
+            ? event.properties.direction_ids
+                .split(',')
+                .map((value) => value.trim())
+                .filter(Boolean)
+            : [];
+
+        for (const id of ids) {
+          ensurePackage(id).impressions += 1;
+        }
+      }
+
       const packageId =
         typeof event.properties.package_id === 'string'
           ? event.properties.package_id
@@ -49,7 +76,15 @@ export function StatsView() {
       if (packageId) {
         const metrics = ensurePackage(packageId);
 
-        if (event.name === 'package_view') metrics.views += 1;
+        if (event.name === 'package_view') {
+          metrics.views += 1;
+          const blockCount =
+            typeof event.properties.block_count === 'number'
+              ? event.properties.block_count
+              : 0;
+          metrics.blockCount = Math.max(metrics.blockCount, blockCount);
+        }
+
         if (event.name === 'entry_open') metrics.entryClicks += 1;
         if (event.name === 'relationship_open') metrics.relationshipClicks += 1;
 
@@ -68,6 +103,10 @@ export function StatsView() {
               : 0;
           metrics.maxDepth = Math.max(metrics.maxDepth, depth);
         }
+
+        if (event.name === 'block_exposed') {
+          metrics.blockExposures += 1;
+        }
       }
 
       if (event.name === 'block_exposed') {
@@ -79,13 +118,89 @@ export function StatsView() {
       }
     }
 
+    const packageRows = [...packages.values()].sort(
+      (a, b) => b.views - a.views || b.dwellMs - a.dwellMs
+    );
+
+    const signals: Signal[] = [];
+
+    for (const row of packageRows) {
+      const avgDwell = row.views ? row.dwellMs / row.views / 1000 : 0;
+      const ctr = row.impressions ? row.entryClicks / row.impressions : 0;
+      const relationshipRate = row.views
+        ? row.relationshipClicks / row.views
+        : 0;
+      const blockExposureRate =
+        row.views && row.blockCount
+          ? row.blockExposures / (row.views * row.blockCount)
+          : 0;
+
+      if (row.views >= 2 && avgDwell >= 25 && row.maxDepth >= 75) {
+        signals.push({
+          packageId: row.id,
+          tone: 'positive',
+          title: 'Strong engagement',
+          evidence: `${Math.round(avgDwell)}s average dwell and ${row.maxDepth}% depth reached.`
+        });
+      }
+
+      if (row.impressions >= 3 && ctr >= 0.4 && row.views >= 2 && avgDwell < 12) {
+        signals.push({
+          packageId: row.id,
+          tone: 'watch',
+          title: 'Entry promise stronger than retention',
+          evidence: `${Math.round(ctr * 100)}% entry rate, but only ${Math.round(avgDwell)}s average dwell.`
+        });
+      }
+
+      if (row.impressions >= 5 && ctr <= 0.15 && row.views >= 1 && avgDwell >= 20) {
+        signals.push({
+          packageId: row.id,
+          tone: 'watch',
+          title: 'Good once discovered; weak entry attraction',
+          evidence: `${Math.round(ctr * 100)}% entry rate versus ${Math.round(avgDwell)}s average dwell.`
+        });
+      }
+
+      if (row.views >= 3 && row.maxDepth <= 25) {
+        signals.push({
+          packageId: row.id,
+          tone: 'watch',
+          title: 'Deeper layer rarely reached',
+          evidence: `Maximum recorded depth is ${row.maxDepth}% across ${row.views} views.`
+        });
+      }
+
+      if (row.views >= 2 && relationshipRate >= 0.5) {
+        signals.push({
+          packageId: row.id,
+          tone: 'positive',
+          title: 'Connections encourage exploration',
+          evidence: `${row.relationshipClicks} relationship follows across ${row.views} views.`
+        });
+      }
+
+      if (
+        row.views >= 2 &&
+        row.blockCount >= 2 &&
+        blockExposureRate > 0 &&
+        blockExposureRate < 0.45
+      ) {
+        signals.push({
+          packageId: row.id,
+          tone: 'neutral',
+          title: 'Large parts of the composition are being skipped',
+          evidence: `About ${Math.round(blockExposureRate * 100)}% of available blocks were exposed per view.`
+        });
+      }
+    }
+
     return {
       events,
       sessionCount: sessions.size,
-      packageRows: [...packages.values()].sort(
-        (a, b) => b.views - a.views || b.dwellMs - a.dwellMs
-      ),
+      packageRows,
       blockRows: [...blockTypes.entries()].sort((a, b) => b[1] - a[1]),
+      signals,
       relationshipFollows: events.filter(
         (event) => event.name === 'relationship_open'
       ).length,
@@ -153,26 +268,62 @@ export function StatsView() {
 
       <section className="sf-stats-section">
         <div className="sf-stats-section-title">
+          <span>Signals</span>
+          <p>
+            These are evidence-based heuristics, not scores. They only appear
+            after enough usage exists for a pattern to be worth noticing.
+          </p>
+        </div>
+        <div className="sf-stats-signals">
+          {data.signals.map((signal, index) => (
+            <article
+              className={`sf-stats-signal sf-stats-signal-${signal.tone}`}
+              key={`${signal.packageId}-${signal.title}-${index}`}
+            >
+              <span>{signal.packageId}</span>
+              <strong>{signal.title}</strong>
+              <p>{signal.evidence}</p>
+            </article>
+          ))}
+          {!data.signals.length ? (
+            <p className="sf-stats-empty">
+              No reliable pattern yet. A few normal browsing sessions will
+              create enough evidence for diagnostics.
+            </p>
+          ) : null}
+        </div>
+      </section>
+
+      <section className="sf-stats-section">
+        <div className="sf-stats-section-title">
           <span>Package engagement</span>
           <p>
-            Views show attraction; dwell and depth show whether the experience
-            keeps attention.
+            Impressions and entry rate show attraction; dwell and depth show
+            whether the experience keeps attention.
           </p>
         </div>
         <div className="sf-stats-table">
           <div className="sf-stats-row sf-stats-row-head">
             <span>Package</span>
-            <span>Views</span>
+            <span>Shown</span>
             <span>Entry</span>
+            <span>Views</span>
             <span>Rel.</span>
             <span>Avg dwell</span>
             <span>Depth</span>
           </div>
           {data.packageRows.map((row) => (
-            <div className="sf-stats-row" key={row.id}>
+            <div className="sf-stats-row sf-stats-row-wide" key={row.id}>
               <strong>{row.id}</strong>
+              <span>{row.impressions}</span>
+              <span>
+                {row.impressions
+                  ? `${Math.round(
+                      (row.entryClicks / row.impressions) * 100
+                    )}%`
+                  : '—'}
+              </span>
               <span>{row.views}</span>
-              <span>{row.entryClicks}</span>
               <span>{row.relationshipClicks}</span>
               <span>
                 {row.views

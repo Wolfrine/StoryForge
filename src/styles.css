@@ -1030,3 +1030,60 @@ a:focus-visible {
     min-width: 720px;
   }
 }
+
+
+.sf-stats-signals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 8px;
+}
+
+.sf-stats-signal {
+  min-height: 150px;
+  padding: 18px;
+  border: 1px solid rgba(38, 58, 71, .10);
+  border-radius: 18px;
+  background: rgba(255, 253, 248, .66);
+}
+
+.sf-stats-signal > span {
+  display: block;
+  color: #71808a;
+  font-size: 8px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.sf-stats-signal > strong {
+  display: block;
+  margin-top: 22px;
+  font-family: Iowan Old Style, Baskerville, Georgia, serif;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.sf-stats-signal > p {
+  margin: 10px 0 0;
+  color: #71808a;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.sf-stats-signal-positive {
+  border-color: rgba(65, 126, 103, .23);
+  background: rgba(236, 246, 239, .72);
+}
+
+.sf-stats-signal-watch {
+  border-color: rgba(174, 105, 76, .25);
+  background: rgba(249, 238, 230, .72);
+}
+
+.sf-stats-signal-neutral {
+  border-style: dashed;
+}
+
+.sf-stats-row-wide {
+  grid-template-columns: minmax(180px, 1.5fr) repeat(6, minmax(68px, .42fr));
+}
