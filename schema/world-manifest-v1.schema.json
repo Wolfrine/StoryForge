@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://storyforge.local/schema/world-manifest-v1.schema.json",
+  "title": "StoryForge World Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "title", "theme", "packages"],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "title": { "type": "string", "minLength": 1 },
+    "subtitle": { "type": "string" },
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["palette"],
+      "properties": {
+        "palette": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["background", "foreground", "surface", "muted", "accent"],
+          "properties": {
+            "background": { "type": "string" },
+            "foreground": { "type": "string" },
+            "surface": { "type": "string" },
+            "muted": { "type": "string" },
+            "accent": { "type": "string" }
+          }
+        },
+        "typography": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tone": { "enum": ["editorial", "humanist", "modern", "technical"] }
+          }
+        },
+        "motion": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "pace": { "enum": ["still", "slow", "medium", "active"] }
+          }
+        },
+        "composition": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "density": { "enum": ["airy", "balanced", "dense"] },
+            "mediaWeight": { "enum": ["low", "balanced", "dominant"] }
+          }
+        }
+      }
+    },
+    "entryPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxDirections": { "type": "integer", "minimum": 3, "maximum": 7 },
+        "preferDiversity": { "type": "boolean" }
+      }
+    },
+    "packages": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "https://storyforge.local/schema/story-package-v1.schema.json" }
+    }
+  }
+}
