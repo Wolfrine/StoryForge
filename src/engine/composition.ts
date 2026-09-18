@@ -1,51 +1,23 @@
 import type { StoryBlock, StoryPackage, StoryTheme } from '../domain/story';
+import {
+  resolveBlockVisualSpec,
+  type BlockEmphasis,
+  type BlockWidth
+} from './blockRegistry';
 
 export interface ComposedBlock {
   block: StoryBlock;
-  width: 'narrow' | 'medium' | 'wide' | 'full';
-  emphasis: 'quiet' | 'normal' | 'strong';
+  width: BlockWidth;
+  emphasis: BlockEmphasis;
+  interaction: 'passive' | 'explore' | 'navigate';
 }
 
-export function composePackage(pkg: StoryPackage, theme: StoryTheme): ComposedBlock[] {
-  const mediaWeight = theme.composition?.mediaWeight ?? 'balanced';
-
-  return pkg.blocks.map((block) => {
-    if (block.type === 'hero') {
-      return {
-        block,
-        width: mediaWeight === 'dominant' ? 'full' : 'wide',
-        emphasis: 'strong'
-      };
-    }
-
-    if (block.type === 'gallery') {
-      return {
-        block,
-        width: block.mediaIds.length > 2 ? 'full' : 'wide',
-        emphasis: mediaWeight === 'dominant' ? 'strong' : 'normal'
-      };
-    }
-
-    if (block.type === 'timeline' || block.type === 'process') {
-      return {
-        block,
-        width: 'wide',
-        emphasis: 'normal'
-      };
-    }
-
-    if (block.type === 'relationships') {
-      return {
-        block,
-        width: 'wide',
-        emphasis: 'quiet'
-      };
-    }
-
-    return {
-      block,
-      width: 'narrow',
-      emphasis: block.type === 'quote' ? 'strong' : 'normal'
-    };
-  });
+export function composePackage(
+  pkg: StoryPackage,
+  theme: StoryTheme
+): ComposedBlock[] {
+  return pkg.blocks.map((block) => ({
+    block,
+    ...resolveBlockVisualSpec(block, theme)
+  }));
 }

@@ -97,21 +97,21 @@ Presentation comes from:
 
 ## Semantic blocks v1
 
-Initial registry:
+Current registry:
 - hero
 - prose
 - quote
 - gallery
+- annotated media
 - timeline
 - process
+- journey
+- comparison
+- graph
 - relationships
 
 Future reusable blocks can include:
 - map
-- journey
-- comparison
-- diagram
-- graph
 - layered image
 - before/after
 - audio scene
