@@ -58,7 +58,7 @@ export default defineConfig({
           },
           {
             urlPattern:
-              /\/storyworld\/.*\.(?:png|jpg|jpeg|webp|avif|svg|gif|mp4|webm|mp3|ogg)$/i,
+              /\/storyworld\/.*\.(?:png|jpg|jpeg|webp|avif|gif|mp4|webm|mp3|ogg)$/i,
             handler: 'CacheFirst',
             options: {
               cacheName: 'storyforge-media',

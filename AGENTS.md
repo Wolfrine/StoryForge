@@ -29,6 +29,20 @@ Creator agents must not:
 - depend on one fixed frontend layout
 - edit the engine to make their package render
 
+## Mandatory visual-media policy
+
+For creator-authored story content:
+
+- **Never use SVG.**
+- When a background, hero image, conceptual illustration, diagram-like image, environment, portrait or supporting visual is needed, use the available **image-generation tool** to create it.
+- Save generated story imagery as raster media: prefer **WebP**, otherwise PNG/JPEG/AVIF.
+- Do not hand-build decorative SVGs, inline SVG illustrations, or SVG diagrams as substitutes for generated imagery.
+- If information needs structural precision, use StoryForge semantic blocks such as graph, comparison, timeline, process, journey or annotations; pair them with generated raster imagery when visual atmosphere is needed.
+- A creator may reuse an existing approved raster image when appropriate, but should not fabricate a low-quality placeholder instead of generating the intended visual.
+- Background and supporting images should follow the package theme and feel like one coherent visual language.
+
+StoryForge validates this rule and rejects SVG story media.
+
 ### Draft
 
 Push package/media changes on a branch matching:
@@ -69,7 +83,9 @@ Relative media references are part of the creator contract:
 
 StoryForge owns persistence.
 
-The active backend is the repository `published-media` branch because Firebase Storage requires project billing. A Firebase Storage driver is already implemented and can replace the backend later without changing package structure.
+The active backend is the repository `published-media` branch because Firebase Storage requires project billing. Published files use content-addressed paths so a regenerated asset receives a new URL and cannot be trapped behind an old PWA cache entry.
+
+A Firebase Storage driver is already implemented and can replace the backend later without changing package structure.
 
 ## Engine agents
 
@@ -87,7 +103,7 @@ They may:
 Engine agents must not:
 - create entity-specific components
 - invent missing lore
-- generate replacement story imagery
+- generate replacement story imagery on behalf of the renderer
 - hardcode the visual identity of a named story element
 - add a layout because one specific entity needs it
 

@@ -9,10 +9,15 @@ storyworld/authoring/packages/<packageId>/
   package.json
   media/
     hero.webp
-    diagram.svg
+    background.webp
+    content.webp
     audio.mp3
     ...
 ```
+
+**SVG is prohibited for creator-authored story media.**
+
+When a story element needs a background, hero, portrait, environment, conceptual illustration or supporting content image, generate it with the available image-generation tool and store the result as WebP/PNG/JPEG/AVIF.
 
 Media references inside `package.json` can be package-relative:
 
@@ -29,6 +34,8 @@ Media references inside `package.json` can be package-relative:
 }
 ```
 
+For precise structures, use StoryForge blocks such as `graph`, `comparison`, `process`, `timeline`, `journey` or `annotatedMedia`; do not draw an SVG diagram.
+
 ## Draft
 
 Work on a branch matching:
@@ -39,7 +46,7 @@ content/<agent-or-topic>
 
 Any change inside a package folder triggers the authoring workflow.
 
-It validates the package, uploads relative media privately to Cloud Storage, and writes:
+The active media backend records immutable creator-commit URLs for draft raster media and writes:
 
 ```text
 storyworlds/novasaga/drafts/<packageId>
@@ -76,8 +83,8 @@ with:
 The publish workflow:
 
 1. reads the Firestore draft
-2. copies draft media to the published Storage prefix
-3. creates stable published download URLs
+2. promotes its media to the stable published-media backend
+3. gives each media version a content-addressed URL
 4. archives the previous Firestore package revision
 5. writes the new published package
 6. records the publishing agent
@@ -97,7 +104,7 @@ npm run content:admin -- publish <packageId>
 
 Creator agents own:
 - text
-- generated media
+- generated raster media
 - theme
 - blocks
 - relationships

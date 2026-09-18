@@ -48,7 +48,6 @@ const validatePackage = ajv.compile(packageSchema);
 const validateSource = ajv.compile(sourceSchema);
 
 const MIME_BY_EXTENSION = {
-  '.svg': 'image/svg+xml',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
@@ -102,14 +101,34 @@ function packageRef(packageId, mode = 'published') {
     .doc(packageId);
 }
 
+function validateCreatorMediaPolicy(pkg, sourceLabel) {
+  for (const asset of pkg.media ?? []) {
+    if (asset.type !== 'image') continue;
+
+    const src = String(asset.src ?? '').trim();
+    const normalized = src.toLowerCase().split(/[?#]/, 1)[0];
+
+    if (
+      normalized.endsWith('.svg') ||
+      normalized.startsWith('data:image/svg+xml')
+    ) {
+      throw new Error(
+        `${sourceLabel}: SVG story media is prohibited (${asset.id}). Use image generation and save raster media such as WebP/PNG/JPEG/AVIF.`
+      );
+    }
+  }
+}
+
 function validatePackageOrThrow(pkg, sourceLabel) {
-  if (validatePackage(pkg)) return;
+  if (!validatePackage(pkg)) {
+    const details = (validatePackage.errors ?? [])
+      .map((error) => `${error.instancePath || '/'} ${error.message}`)
+      .join('; ');
 
-  const details = (validatePackage.errors ?? [])
-    .map((error) => `${error.instancePath || '/'} ${error.message}`)
-    .join('; ');
+    throw new Error(`${sourceLabel}: package schema invalid: ${details}`);
+  }
 
-  throw new Error(`${sourceLabel}: package schema invalid: ${details}`);
+  validateCreatorMediaPolicy(pkg, sourceLabel);
 }
 
 function validateSourceOrThrow(source, sourceLabel) {
@@ -134,6 +153,14 @@ function isExternalSource(src) {
 
 function normalizeObjectPath(value) {
   return value.replace(/\\/g, '/').replace(/^\/+/, '');
+}
+
+function mediaContentHash(bytes) {
+  return crypto
+    .createHash('sha256')
+    .update(bytes)
+    .digest('hex')
+    .slice(0, 16);
 }
 
 function mimeTypeFor(filePath) {
@@ -329,8 +356,9 @@ async function publishGithubUrl(sourceUrl, pkg, asset) {
     }
   }
 
+  const hash = mediaContentHash(bytes);
   const destinationPath =
-    `storyworld/published-media/${worldId}/${pkg.id}/` +
+    `storyworld/published-media/${worldId}/${pkg.id}/${hash}/` +
     normalizeObjectPath(suffix);
 
   return await putGithubPublishedFile({
@@ -427,12 +455,14 @@ async function uploadLocalMediaToGithub(pkg, packageJsonPath, mode) {
     }
 
     const relative = normalizeObjectPath(asset.src);
+    const bytes = fs.readFileSync(localPath);
+    const hash = mediaContentHash(bytes);
     const destinationPath =
-      `storyworld/published-media/${worldId}/${pkg.id}/${relative}`;
+      `storyworld/published-media/${worldId}/${pkg.id}/${hash}/${relative}`;
 
     asset.src = await putGithubPublishedFile({
       destinationPath,
-      bytes: fs.readFileSync(localPath),
+      bytes,
       packageId: pkg.id,
       assetId: asset.id
     });
