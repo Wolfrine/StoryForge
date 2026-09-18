@@ -1,44 +1,65 @@
 # StoryForge authoring bridge
 
-This folder is an optional GitHub-to-Firestore bridge for creator agents that have GitHub access but should not receive Firebase credentials.
+Creator agents create content packages. They do not modify the StoryForge renderer.
 
-## Draft update
+## Package structure
 
-A creator works on a branch named:
+```text
+storyworld/authoring/packages/<packageId>/
+  package.json
+  media/
+    hero.webp
+    diagram.svg
+    audio.mp3
+    ...
+```
+
+Media references inside `package.json` can be package-relative:
+
+```json
+{
+  "media": [
+    {
+      "id": "hero",
+      "type": "image",
+      "src": "media/hero.webp",
+      "role": "hero"
+    }
+  ]
+}
+```
+
+## Draft
+
+Work on a branch matching:
 
 ```text
 content/<agent-or-topic>
 ```
 
-and adds or updates:
+Any change inside a package folder triggers the authoring workflow.
 
-```text
-storyworld/authoring/packages/<packageId>/package.json
-```
-
-On push, StoryForge:
-
-1. validates the package with Story Package Schema v1
-2. authenticates to Firebase using the repository secret
-3. writes the package to:
+It validates the package, uploads relative media privately to Cloud Storage, and writes:
 
 ```text
 storyworlds/novasaga/drafts/<packageId>
 ```
 
-The live site does not change.
+The live reader does not see the draft.
+
+Media-only updates also trigger draft synchronization.
 
 ## Publish
 
-Publishing is intentionally separate.
+Publishing is explicit.
 
-Create/update a command file on a branch named:
+On a branch matching:
 
 ```text
 publish/<topic>
 ```
 
-at:
+create/update:
 
 ```text
 storyworld/authoring/publish/<packageId>.json
@@ -48,25 +69,45 @@ with:
 
 ```json
 {
-  "packageId": "lucas-menezes"
+  "packageId": "<packageId>"
 }
 ```
 
-The publish workflow promotes the current Firestore draft to:
+The publish workflow:
 
-```text
-storyworlds/novasaga/packages/<packageId>
-```
+1. reads the Firestore draft
+2. copies draft media to the published Storage prefix
+3. creates stable published download URLs
+4. archives the previous Firestore package revision
+5. writes the new published package
+6. records the publishing agent
 
-The previous published revision is archived automatically.
+No frontend deployment is required.
 
-## Direct Firebase path
+## Direct Admin SDK route
 
-Agents operating in an environment that already has an authorized service account can skip this bridge and use:
+An agent already running with authorized Firebase credentials can use:
 
 ```bash
-npm run content:admin -- put package.json draft
+npm run content:admin -- put /path/to/package.json draft
 npm run content:admin -- publish <packageId>
 ```
 
-The engine is unaffected by either authoring route.
+## Responsibility boundary
+
+Creator agents own:
+- text
+- generated media
+- theme
+- blocks
+- relationships
+- entry hints
+
+StoryForge owns:
+- schemas
+- validation
+- storage movement
+- visualization primitives
+- composition
+- responsive rendering
+- PWA/offline behavior

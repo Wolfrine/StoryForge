@@ -4,73 +4,97 @@ StoryForge is a visualization and experience runtime for AI-authored storyworld 
 
 > Creators create. StoryForge visualizes.
 
-Creator agents provide structured text, media, relationships and theme definitions. StoryForge discovers those packages automatically, validates them, chooses entry directions, interprets themes, composes semantic blocks and renders the experience.
+Creator agents provide structured text, media, relationships and theme definitions. StoryForge validates those packages, stores live structured content in Firestore, persists published media through a pluggable media backend, chooses entry directions, interprets themes and composes generic visualization blocks.
 
-## v1 foundation
+## Production architecture
 
-- independent package folders
-- automatic world compiler
-- Story Package Schema v1
-- World Source Schema v1
-- relationship/media integrity validation
-- bounded Entry Resolver
+```text
+Creator agents
+   ↓
+Draft package + media
+   ↓
+Schema validation
+   ↓
+Firestore drafts
+   ↓ publish
+Firestore published package
+   +
+Published media backend
+   ↓
+StoryForge PWA
+```
+
+The PWA reads Firestore first and falls back to its bundled snapshot offline.
+
+## Creator workflow
+
+Preferred GitHub bridge:
+
+```text
+content/<topic>
+└── storyworld/authoring/packages/<packageId>/
+    ├── package.json
+    └── media/
+        └── ...
+```
+
+Any package/media change on a `content/` branch is validated and synced to a Firestore draft.
+
+Publishing is separate:
+
+```text
+publish/<topic>
+└── storyworld/authoring/publish/<packageId>.json
+```
+
+The publish workflow archives the previous revision, promotes media, and writes the new published Firestore package. No frontend deployment is required.
+
+See `storyworld/authoring/README.md` and `docs/CONTENT_STORAGE.md`.
+
+## Media backend
+
+The media layer is pluggable.
+
+- **Active:** GitHub `published-media` branch. The Firebase project currently has no billing account, so Cloud Storage bucket creation is unavailable.
+- **Ready:** Firebase Storage driver. After billing/Blaze is enabled, set `STORYFORGE_MEDIA_BACKEND=firebase-storage`; creator packages do not change.
+
+## Engine foundation
+
 - fixed centered non-scrollable world landing
-- creator-defined Theme Runtime
+- bounded Entry Resolver
+- Theme Runtime
 - generic Composition Engine
-- generic block registry:
+- PWA/mobile/offline shell
+- usage analytics and diagnostics
+- generic visualization registry:
   - hero
   - prose
   - quote
   - gallery
+  - annotated media
   - timeline
   - process
+  - journey
+  - comparison
+  - graph
   - relationships
-- neutral fallback behavior
-- engine testbench
 
-There are no named story-element page components in the v1 architecture.
+There are no named story-element page components.
 
-## Source structure
+## Direct package links
 
-```text
-storyworld/testbench/
-  world.json
-  packages/
-    sunset-moonland/
-      package.json
-    lucas-menezes/
-      package.json
-    ...
-```
-
-In a real creator workflow, each package can also contain its own `media/` directory.
-
-The build compiler discovers packages automatically and produces `src/generated/world.json`. That generated file is runtime output, not an authoring surface.
-
-## Engine structure
+Published packages can be opened generically with:
 
 ```text
-src/
-  domain/
-    story.ts
-  engine/
-    entryResolver.ts
-    themeRuntime.ts
-    composition.ts
-    BlockRenderer.tsx
-  components/
-    WorldLanding.tsx
-    PackageExperience.tsx
+?package=<packageId>
 ```
 
-See `docs/ENGINE_V1.md` and `AGENTS.md`.
+This is useful for packages intentionally hidden from the landing resolver.
 
-## Local
+## Local engine development
 
 ```bash
 npm install
 npm run build
 npm run dev
 ```
-
-The current testbench is deliberately not a replacement for canonical NovaSaga data. Creator pipelines will eventually emit v1 package folders directly.

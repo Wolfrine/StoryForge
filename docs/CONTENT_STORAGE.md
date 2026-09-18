@@ -1,123 +1,163 @@
 # StoryForge content storage
 
-## Current architecture
+## Active storage layout
 
-StoryForge separates the engine from the story content.
+StoryForge keeps the engine and content independent.
 
-### GitHub owns
+### GitHub
 
-- engine code
+Owns:
+- StoryForge engine and schemas
+- authoring workflows
+- PWA/offline snapshot
+- published binary media while Firebase Storage billing is unavailable
+
+### Firestore
+
+Owns live structured content:
+- published packages
+- private drafts
+- revision history
+- world theme / entry policy
+
+## Media backend
+
+StoryForge has a pluggable media backend.
+
+### Active now: GitHub published-media branch
+
+The Firebase project currently has no billing account attached, and Google Cloud Storage bucket creation returns:
+
+```text
+billing account ... state absent
+```
+
+Therefore StoryForge automatically uses a repository media driver without blocking creators.
+
+Published media is copied to:
+
+```text
+published-media branch
+
+storyworld/
+  published-media/
+    novasaga/
+      <packageId>/
+        media/
+          ...
+```
+
+Firestore stores stable `raw.githubusercontent.com` URLs to those published assets.
+
+The PWA caches those published-media URLs for offline/repeat use.
+
+### Future: Firebase Storage
+
+The same content-admin pipeline already contains a `firebase-storage` backend.
+
+After billing/Blaze is enabled, set:
+
+```text
+STORYFORGE_MEDIA_BACKEND=firebase-storage
+```
+
+Creator package structure and Firestore documents do not change.
+
+## Creator lifecycle
+
+### 1. Create
+
+```text
+storyworld/authoring/packages/<packageId>/
+  package.json
+  media/
+    image.webp
+    diagram.svg
+    ...
+```
+
+The package references media relatively:
+
+```json
+{
+  "media": [
+    {
+      "id": "hero",
+      "type": "image",
+      "src": "media/hero.webp"
+    }
+  ]
+}
+```
+
+### 2. Draft
+
+Push on:
+
+```text
+content/<topic>
+```
+
+The draft workflow:
+- validates the package
+- records immutable creator-commit media URLs
+- writes the structured package to Firestore drafts
+
+### 3. Publish
+
+Push a publish request on:
+
+```text
+publish/<topic>
+```
+
+The publish workflow:
+- reads the Firestore draft
+- copies its media to the stable `published-media` branch
+- rewrites media URLs to the published location
+- archives the previous Firestore revision
+- writes the new published package
+
+No StoryForge frontend deployment is required.
+
+## Reader runtime
+
+```text
+online:
+  Firestore published package
+    + published media URL
+
+offline/source failure:
+  bundled PWA snapshot
+```
+
+Published media is cached by the PWA.
+
+## Direct package links
+
+The generic reader supports:
+
+```text
+?package=<packageId>
+```
+
+This is useful for previewing an element that is intentionally hidden from the landing resolver.
+
+## Responsibility boundary
+
+Creator agents own:
+- text
+- generated media
+- theme
+- semantic blocks
+- relationships
+- entry hints
+
+StoryForge owns:
 - schemas
-- Firestore security rules
-- creator contracts
-- deployment workflows
-- optional exports/backups
-- bundled snapshot used as the PWA offline fallback
-
-### Firestore owns the live structured storyworld
-
-Published runtime data lives under:
-
-```text
-storyworlds/
-  novasaga/
-    title
-    subtitle
-    theme
-    entryPolicy
-
-    packages/
-      <packageId>
-        schemaVersion
-        kind
-        title
-        summary
-        theme
-        media
-        blocks
-        relationships
-        entry
-        tags
-        _meta
-
-    drafts/
-      <packageId>
-
-    packages/<packageId>/revisions/
-      <revision>
-```
-
-The web client can read only the world document and published packages.
-
-Client writes are denied. Creator agents write through privileged Admin SDK tooling.
-
-## Media
-
-Structured media metadata belongs in the package.
-
-Binary media should ultimately live in Firebase Cloud Storage:
-
-```text
-storyworlds/novasaga/packages/<packageId>/...
-```
-
-Until Storage is enabled, existing package-relative media can still be bundled through the GitHub compiler.
-
-The StoryForge engine never generates substitute lore media.
-
-## Agent workflow
-
-An agent with an authorized Firebase service account can work independently of the frontend.
-
-### Read live packages
-
-```bash
-npm run content:list
-npm run content:admin -- get lucas-menezes published
-```
-
-### Write a draft
-
-```bash
-STORYFORGE_AGENT_ID=creator-lucas \
-npm run content:admin -- put /path/to/package.json draft
-```
-
-The package is validated against Story Package Schema v1 before it is written.
-
-### Publish
-
-```bash
-STORYFORGE_AGENT_ID=creator-lucas \
-npm run content:admin -- publish lucas-menezes
-```
-
-Publishing:
-- preserves the previous published package as a revision
-- increments the package revision
-- records the agent ID and server timestamp
-- updates Firestore immediately
-- does not require a web deployment
-
-### Export / backup
-
-```bash
-npm run content:pull
-```
-
-This creates a package-folder snapshot that can be committed or archived.
-
-## Runtime behavior
-
-The PWA attempts to load the live Firestore world first.
-
-If Firestore is unavailable or the device is offline, it automatically falls back to the bundled compiled snapshot.
-
-Therefore:
-
-```text
-online  -> Firestore live content
-offline -> bundled PWA snapshot
-```
-
-The engine and the content store remain independent.
+- validation
+- draft/publish lifecycle
+- media persistence
+- composition
+- visualization
+- responsive/PWA behavior

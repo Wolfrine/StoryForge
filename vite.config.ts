@@ -67,6 +67,20 @@ export default defineConfig({
                 maxAgeSeconds: 60 * 60 * 24 * 30
               }
             }
+          },
+          {
+            urlPattern: /^https:\/\/raw\.githubusercontent\.com\/Wolfrine\/StoryForge\//i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'storyforge-published-media',
+              expiration: {
+                maxEntries: 240,
+                maxAgeSeconds: 60 * 60 * 24 * 60
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
           }
         ]
       }

@@ -2,17 +2,16 @@ name: StoryForge Publish Draft
 
 on:
   push:
-    branches:
-      - "publish/**"
     paths:
       - "storyworld/authoring/publish/*.json"
 
 jobs:
   publish:
+    if: startsWith(github.ref_name, 'publish/')
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      contents: write
 
     steps:
       - name: Checkout
@@ -40,7 +39,10 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
           FIREBASE_PROJECT_ID: lumio-forge
           STORYFORGE_WORLD_ID: novasaga
-          STORYFORGE_AGENT_ID: github:${{ github.actor }}
+          STORYFORGE_AGENT_ID: "github:${{ github.actor }}"
+          STORYFORGE_MEDIA_BACKEND: github
+          STORYFORGE_GITHUB_TOKEN: ${{ github.token }}
+          STORYFORGE_MEDIA_BRANCH: published-media
         run: |
           set -euo pipefail
 
