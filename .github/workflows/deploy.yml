@@ -30,7 +30,10 @@ jobs:
         run: npm install --no-audit --no-fund
 
       - name: Validate and build
-        run: npm run build
+        run: |
+          npm run build
+          test -f dist/manifest.webmanifest
+          test -f dist/sw.js
 
       - name: Prepare Firebase credentials
         env:
