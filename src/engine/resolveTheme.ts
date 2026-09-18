@@ -66,5 +66,5 @@ const themes: Record<string, ThemeTokens> = {
 
 export function resolveTheme(entity: StoryworldEntity): ThemeTokens {
   const atmosphere = entity.visual?.atmosphere ?? 'serene';
-  return { ...themes[atmosphere] };
+  return { ...(themes[atmosphere] ?? themes.serene!) };
 }
