@@ -1,0 +1,116 @@
+name: Stage validated StoryForge visual delivery
+
+on:
+  push:
+    branches: [delivery/storyforge-visual-20260929]
+    paths: [.github/workflows/stage-visual-delivery.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Retrieve immutable reviewed source
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('node:fs');
+            const crypto = require('node:crypto');
+            if (context.repo.owner !== 'Wolfrine' || context.repo.repo !== 'StoryForge') throw new Error('Repository scope mismatch');
+            const parts = ['938042312b08c3c5d1c3577179540b71a5d63f23','e76a838653af1f5c12e165f709be55512e1dd17b','b4313c5bf09c40b14a0cbad770847a7c2b2b26a4','c246feb6a3e471b0f91b4ae568ec94675603e7ba'];
+            const buffers = [];
+            for (const file_sha of parts) {
+              const {data} = await github.rest.git.getBlob({...context.repo,file_sha});
+              if (data.encoding !== 'base64') throw new Error('Unexpected blob encoding');
+              const bytes = Buffer.from(data.content.replace(/\s/g,''),'base64');
+              const actual = crypto.createHash('sha1').update(Buffer.from(`blob ${bytes.length}\0`)).update(bytes).digest('hex');
+              if (actual !== file_sha) throw new Error('Fragment integrity mismatch');
+              buffers.push(bytes);
+            }
+            const archive = Buffer.concat(buffers);
+            const digest = crypto.createHash('sha256').update(archive).digest('hex');
+            if (digest !== '92d1c90da20693035d1a13d958c03bca1d3cb075516696695e261b50a219896c4') throw new Error('Delivery checksum mismatch');
+            fs.writeFileSync(process.env.RUNNER_TEMP+'/storyforge-delivery.tar.xz',archive);
+      - name: Extract declared repository files
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, tarfile, json
+          from pathlib import Path, PurePosixPath
+          root = Path(os.environ['GITHUB_WORKSPACE'])
+          with tarfile.open(Path(os.environ['RUNNER_TEMP'])/'storyforge-delivery.tar.xz','r:xz') as archive:
+              members = archive.getmembers()
+              if len(members) > 80 or sum(m.size for m in members) > 2000000:
+                  raise RuntimeError('Unexpected delivery size')
+              manifest = json.load(archive.extractfile('delivery-manifest.json'))
+              expected = set(manifest['files']) | {'delivery-manifest.json'}
+              if len(expected) != len(members) or expected != {m.name for m in members}:
+                  raise RuntimeError('Delivery manifest mismatch')
+              allowed = {'src','schema','scripts','storyworld','.github','.harness','skills','AGENTS.md','package.json','firebase.json','vite.config.ts','delivery-manifest.json'}
+              for member in members:
+                  path = PurePosixPath(member.name)
+                  if not member.isfile() or path.is_absolute() or '..' in path.parts or path.parts[0] not in allowed:
+                      raise RuntimeError('Unsafe delivery path: '+member.name)
+                  target = root.joinpath(*path.parts)
+                  target.parent.mkdir(parents=True,exist_ok=True)
+                  target.write_bytes(archive.extractfile(member).read())
+          PY
+      - name: Retrieve reviewed raster assets
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+            const manifest=JSON.parse(fs.readFileSync('delivery-manifest.json','utf8'));
+            if(manifest.media.length!==4)throw new Error('Unexpected media count');
+            for(const asset of manifest.media){
+              if(!/^public\/art\/[a-z]+-[a-f0-9]{8}\.avif$/.test(asset.path))throw new Error('Unsafe asset path');
+              const {data}=await github.rest.git.getBlob({...context.repo,file_sha:asset.sha});
+              const bytes=Buffer.from(data.content.replace(/\s/g,''),'base64');
+              const digest=crypto.createHash('sha1').update(Buffer.from(`blob ${bytes.length}\0`)).update(bytes).digest('hex');
+              if(digest!==asset.sha)throw new Error('Asset checksum mismatch');
+              fs.mkdirSync(path.dirname(asset.path),{recursive:true});fs.writeFileSync(asset.path,bytes);
+            }
+      - name: Validate source bindings and build production runtime
+        run: |
+          npm install --no-audit --no-fund
+          npm test
+          npm run build
+      - name: Create tested commit without changing main
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs=require('node:fs');
+            const base='6f344302b5c77e16213b4a2f27665542a0f7de82';
+            const manifest=JSON.parse(fs.readFileSync('delivery-manifest.json','utf8'));
+            const {data:parent}=await github.rest.git.getCommit({...context.repo,commit_sha:base});
+            const entries=[];
+            for(let offset=0;offset<manifest.files.length;offset+=5){
+              const batch=await Promise.all(manifest.files.slice(offset,offset+5).map(async file=>{
+                const {data:blob}=await github.rest.git.createBlob({...context.repo,content:fs.readFileSync(file).toString('base64'),encoding:'base64'});
+                return {path:file,mode:'100644',type:'blob',sha:blob.sha};
+              }));entries.push(...batch);
+            }
+            entries.push(...manifest.media.map(asset=>({path:asset.path,mode:'100644',type:'blob',sha:asset.sha})));
+            const {data:tree}=await github.rest.git.createTree({...context.repo,base_tree:parent.tree.sha,tree:entries});
+            const {data:commit}=await github.rest.git.createCommit({...context.repo,message:'feat: ship six controllable StoryForge visual presentations',tree:tree.sha,parents:[base],author:{name:'github-actions[bot]',email:'41898282+github-actions[bot]@users.noreply.github.com'}});
+            fs.writeFileSync('delivery.json',JSON.stringify({commit:commit.sha,tree:tree.sha,base,files:entries.length,checks:['npm test','npm run build'],sourceChecksum:'92d1c90da20693035d1a13d958c03bca1d3cb075516696695e261b50a219896c4'},null,2));
+            console.log('DELIVERY_COMMIT='+commit.sha);
+            if(context.ref!=='refs/heads/delivery/storyforge-visual-20260929')throw new Error('Unexpected temporary ref');
+            await github.rest.git.deleteRef({...context.repo,ref:'heads/delivery/storyforge-visual-20260929'});
+            console.log('Temporary delivery branch removed. Main is unchanged until explicit fast-forward promotion.');
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: storyforge-delivery-result
+          path: delivery.json
+          retention-days: 3
