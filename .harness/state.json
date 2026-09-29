@@ -1,0 +1,17 @@
+{
+  "version": "0.1.0",
+  "stage": "semantic-presentation-harness",
+  "runtimeSchema": "story-package-v1@1.0",
+  "authoringContracts": [
+    "story-element-v1",
+    "presentation-plan-v1"
+  ],
+  "currentFocus": "Make agent handoffs structured and presentation data-driven without changing the production runtime.",
+  "next": [
+    "Add deterministic semantic/presentation-to-StoryPackage compiler",
+    "Persist authoring contracts beside creator packages",
+    "Expose generic presentation controls in runtime schema",
+    "Add render-inspect-critique loop and reusable motion/spatial primitives"
+  ],
+  "updated": "2026-09-29"
+}
