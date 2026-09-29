@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://storyforge.local/harness/presentation-plan-v1.schema.json",
+  "title": "StoryForge presentation plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "packageId", "experienceGoal", "primaryPattern", "sections"],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "packageId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "experienceGoal": { "type": "string", "minLength": 1 },
+    "primaryPattern": { "$ref": "#/definitions/patternId" },
+    "supportingPatterns": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/patternId" },
+      "uniqueItems": true
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/section" }
+    },
+    "engineGaps": { "type": "array", "items": { "type": "string" } }
+  },
+  "definitions": {
+    "patternId": {
+      "enum": ["focal-scene", "character-portrait", "world-place", "temporal-arc", "journey-path", "relationship-web", "transformation", "concept-system", "motion-sequence"]
+    },
+    "blockType": {
+      "enum": ["hero", "prose", "quote", "gallery", "annotatedMedia", "timeline", "process", "journey", "comparison", "graph", "relationships"]
+    },
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "pattern", "purpose", "sourceElementIds", "blockTypes"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "pattern": { "$ref": "#/definitions/patternId" },
+        "purpose": { "type": "string", "minLength": 1 },
+        "sourceElementIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "blockTypes": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/blockType" }
+        },
+        "mediaRoles": {
+          "type": "array",
+          "items": { "enum": ["hero", "supporting", "portrait", "environment", "detail", "diagram"] },
+          "uniqueItems": true
+        },
+        "controls": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "emphasis": { "enum": ["quiet", "balanced", "dominant"] },
+            "density": { "enum": ["airy", "balanced", "dense"] },
+            "motionPace": { "enum": ["still", "slow", "medium", "active"] },
+            "reveal": { "enum": ["immediate", "progressive", "on-interaction"] },
+            "interaction": { "enum": ["none", "inspect", "navigate", "explore"] }
+          }
+        }
+      }
+    }
+  }
+}
