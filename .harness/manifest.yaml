@@ -1,0 +1,44 @@
+version: 0.1.0
+stage: specialized
+subject: StoryForge
+objective_status: active
+entrypoint: AGENTS.md
+
+principles:
+  - creators_provide_meaning_engine_provides_rendering
+  - meaning_before_presentation
+  - presentation_is_data_not_named_pages
+  - reusable_patterns_over_one_off_layouts
+  - strict_structured_handoffs_between_agents
+  - perceptual_evidence_over_completion_claims
+  - smallest_adequate_primitive
+  - progressive_disclosure
+  - preserve_source_truth_and_mark_inference
+  - content_growth_must_not_require_frontend_changes
+
+skills:
+  active:
+    - skills/storyforge-orchestration/SKILL.md
+
+knowledge:
+  - docs/ENGINE_V1.md
+  - storyworld/authoring/README.md
+  - schema/story-package-v1.schema.json
+  - .harness/presentation-patterns.yaml
+
+instructions:
+  - AGENTS.md
+  - .harness/objective.md
+  - .harness/architecture.md
+
+contracts:
+  - .harness/contracts/story-element-v1.schema.json
+  - .harness/contracts/presentation-plan-v1.schema.json
+
+evaluations: []
+tools: []
+agents: []
+loops:
+  - interpret_plan_build_validate_review
+state:
+  - .harness/state.json

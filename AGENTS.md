@@ -2,6 +2,41 @@
 
 StoryForge is a visualization engine. It is not a content author and it is not a collection of hand-designed story pages.
 
+
+## Harness routing
+
+Start with `.harness/objective.md` and `.harness/architecture.md`.
+
+For story/content work, use `skills/storyforge-orchestration/SKILL.md`. It defines the structured pipeline:
+
+```text
+source / intent
+  → semantic story elements
+  → presentation plan
+  → assets when needed
+  → StoryPackage v1
+  → validation
+  → rendered perceptual review
+```
+
+The upstream authoring contracts are:
+
+- `.harness/contracts/story-element-v1.schema.json`
+- `.harness/contracts/presentation-plan-v1.schema.json`
+
+Presentation choices come from `.harness/presentation-patterns.yaml`.
+
+These contracts guide agents today; the production runtime still consumes `StoryPackage v1`. Do not bypass the existing package schema or publishing path.
+
+The role boundary matters more than the product performing it:
+
+- Chat: interpretation, direction, architecture, critique.
+- Work: long research/synthesis, browser/computer workflows, asset gathering and visual inspection.
+- Codex: repository edits, validators, compilers, migrations and reusable engine primitives.
+
+One agent may perform multiple roles, but preserve the structured handoff between meaning, presentation intent and runtime package.
+
+
 ## Creator agents
 
 Creator agents own story packages and media.

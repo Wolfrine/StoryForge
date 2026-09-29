@@ -1,0 +1,68 @@
+version: 1
+purpose: Reusable perceptual patterns. These are semantic presentation intents, not fixed page templates.
+
+patterns:
+  focal-scene:
+    job: Establish one subject, place or moment with immediate emotional/spatial context.
+    strong_inputs: [character, place, event, scene]
+    preferred_blocks: [hero, prose, annotatedMedia, gallery]
+    controls: [emphasis, mediaWeight, motionPace, reveal]
+
+  character-portrait:
+    job: Make identity, motivation, change and relationships understandable around one character.
+    strong_inputs: [character]
+    preferred_blocks: [hero, prose, timeline, relationships, graph, gallery]
+    controls: [emphasis, density, reveal, interaction]
+
+  world-place:
+    job: Make a place understandable as atmosphere, structure, contained elements and connected destinations.
+    strong_inputs: [place, object, faction]
+    preferred_blocks: [hero, annotatedMedia, journey, relationships, gallery, graph]
+    controls: [mediaWeight, density, interaction, reveal]
+    future_primitives: [map, layeredImage, spatialScene]
+
+  temporal-arc:
+    job: Make sequence, causality and change over time immediately perceivable.
+    strong_inputs: [event, beat, character, story]
+    preferred_blocks: [timeline, journey, prose, gallery]
+    controls: [motionPace, reveal, emphasis]
+
+  journey-path:
+    job: Present movement through stages, places or states with a sense of progress and direction.
+    strong_inputs: [story, character, event, place]
+    preferred_blocks: [journey, timeline, hero, relationships]
+    controls: [interaction, reveal, motionPace, emphasis]
+
+  relationship-web:
+    job: Make connections, influence, conflict and dependency visible before they are explained in prose.
+    strong_inputs: [character, faction, concept, relationship]
+    preferred_blocks: [graph, relationships, annotatedMedia, prose]
+    controls: [density, interaction, emphasis, reveal]
+
+  transformation:
+    job: Make a before/after, state change or evolution obvious.
+    strong_inputs: [character, place, object, concept, event]
+    preferred_blocks: [comparison, process, timeline, hero]
+    controls: [emphasis, reveal, motionPace]
+    future_primitives: [beforeAfter, morphSequence]
+
+  concept-system:
+    job: Explain an abstract rule, mechanism, hierarchy or causal system perceptually.
+    strong_inputs: [concept, faction, theme]
+    preferred_blocks: [process, graph, comparison, annotatedMedia, prose]
+    controls: [density, interaction, reveal]
+
+  motion-sequence:
+    job: Use time and controlled motion when meaning depends on pacing, choreography or changing state.
+    strong_inputs: [event, beat, scene, story, concept]
+    preferred_blocks: [hero, gallery, timeline, process]
+    controls: [motionPace, reveal, emphasis, interaction]
+    current_fallback: Use video media or existing blocks; do not create one-off animation components.
+    future_primitives: [motionScene, cameraPath, interactiveSequence]
+
+selection_rules:
+  - Choose the pattern from the perceptual job, not the entity kind alone.
+  - Prefer one primary pattern; add supporting patterns only when they communicate a distinct relationship.
+  - Use the smallest number of blocks that preserves the meaning.
+  - Prefer structure blocks for precise relationships and generated imagery for atmosphere or visual context.
+  - If a pattern needs a missing primitive, degrade to current generic blocks and record the reusable engine gap.
