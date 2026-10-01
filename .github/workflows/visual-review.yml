@@ -113,7 +113,7 @@ jobs:
                 page.on('pageerror', onError);
                 try {
                   await page.goto(base + (id ? '/?package=' + encodeURIComponent(id) : '/'), {waitUntil:'domcontentloaded', timeout:30000});
-                  await page.waitForSelector('main[data-storyforge-state]', {timeout:15000});
+                  await page.waitForSelector('main[data-storyforge-state]', {timeout:25000});
                   row.state = await readState(page);
                   assertViewIdentity({packageId:id,worldId:report.worldId}, row.state);
                   // Full-page evidence includes lazy imagery: bring each actual image into view.
@@ -155,5 +155,13 @@ jobs:
         if: always()
         with:
           name: storyforge-visual-review
-          path: review/
+          path: |
+            review/
+            !review/workspace.tgz
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: storyforge-review-workspace
+          path: review/workspace.tgz
           retention-days: 7

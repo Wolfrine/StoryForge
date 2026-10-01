@@ -13,5 +13,6 @@ jobs:
         with:
           node-version: '22'
       - run: node --test scripts/visual-review-evidence.test.mjs
+      - run: node --experimental-strip-types --test scripts/public-world.test.mjs
       - run: npm install --no-audit --no-fund
       - run: npm run build

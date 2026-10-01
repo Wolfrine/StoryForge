@@ -29,8 +29,9 @@ function App() {
     initializeAnalytics();
 
     let cancelled = false;
+    const controller = new AbortController();
 
-    void loadStoryWorld().then((loaded) => {
+    void loadStoryWorld(controller.signal).then((loaded) => {
       if (cancelled) return;
 
       setWorld(loaded.world);
@@ -41,10 +42,13 @@ function App() {
         content_source: loaded.source,
         package_count: loaded.world.packages.length
       });
+    }).catch((error) => {
+      if (!controller.signal.aborted) console.error('[StoryForge] Content loading failed.', error);
     });
 
     return () => {
       cancelled = true;
+      controller.abort();
     };
   }, []);
 

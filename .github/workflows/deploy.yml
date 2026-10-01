@@ -32,6 +32,7 @@ jobs:
       - name: Validate and build
         run: |
           node --test scripts/visual-review-evidence.test.mjs
+          node --experimental-strip-types --test scripts/public-world.test.mjs
           npm run build
           test -f dist/manifest.webmanifest
           test -f dist/sw.js
