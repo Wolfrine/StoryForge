@@ -1,9 +1,7 @@
-name: StoryForge visual verification
+name: StoryForge post-deployment visual verification
 
 on:
-  push:
-    branches: [main]
-    paths: ['.github/workflows/visual-review.yml']
+  workflow_dispatch:
   workflow_run:
     workflows: ['Validate, Build and Deploy StoryForge']
     types: [completed]
@@ -17,17 +15,21 @@ permissions:
 
 jobs:
   inspect:
-    if: github.event_name == 'push' || github.event.workflow_run.conclusion == 'success'
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 12
+    env:
+      EXPECTED_RELEASE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Verify the evidence checks
+        run: node --test scripts/visual-review-evidence.test.mjs
       - name: Install browser and application dependencies
         run: |
           npm install --no-audit --no-fund
@@ -42,6 +44,8 @@ jobs:
           node --input-type=module <<'NODE'
           import { chromium } from 'playwright';
           import fs from 'node:fs/promises';
+          import { assertViewIdentity, saveReviewReport } from './scripts/visual-review-evidence.mjs';
+          async function inspect() {
           const base = 'https://lumio-forge.web.app';
           const decode = (v) => {
             if ('mapValue' in v) return Object.fromEntries(Object.entries(v.mapValue.fields || {}).map(([k, x]) => [k, decode(x)]));
@@ -54,6 +58,13 @@ jobs:
           };
           const root = 'https://firestore.googleapis.com/v1/projects/lumio-forge/databases/(default)/documents/storyworlds/novasaga';
           const get = async (url) => { const r = await fetch(url, {signal:AbortSignal.timeout(15000)}); if (!r.ok) throw new Error(`${r.status}: ${url}`); return r.json(); };
+          const expectedReleaseSha = process.env.EXPECTED_RELEASE_SHA;
+          const readRelease = async () => (await get(base + '/storyforge-release.json?review=' + expectedReleaseSha + '&at=' + Date.now())).commit;
+          const releaseBefore = await readRelease();
+          if (releaseBefore !== expectedReleaseSha) {
+            await fs.writeFile('review/report.json', JSON.stringify({expectedReleaseSha, releaseBefore, verification:'failed', designAcceptance:'not-assessed', failures:['Live release differs from deployment under review.']}, null, 2));
+            throw new Error('Live release differs from deployment under review.');
+          }
           const doc = await get(root);
           let next = '', packages = [];
           do {
@@ -84,31 +95,61 @@ jobs:
             }
           }
           const browser = await chromium.launch({headless: true});
-          const report = {commit: process.env.GITHUB_SHA, packages: packages.map(p => p.id), media, views: []};
+          const viewports = [{width:1440,height:1000},{width:390,height:844}];
+          const expectedViews = viewports.flatMap(viewport => ['', ...packages.map(p => p.id)].map(id => ({id,viewport})));
+          const report = {expectedReleaseSha, releaseBefore, worldId:typeof world.id === 'string' ? world.id : 'novasaga', packages: packages.map(p => p.id), expectedViews, media, views: []};
+          const readState = page => page.evaluate(() => {
+            const root = document.querySelector('main[data-storyforge-state]');
+            return root ? {kind:root.dataset.storyforgeState, packageId:root.dataset.packageId || '', worldId:root.dataset.worldId, contentSource:root.dataset.contentSource} : null;
+          });
           try {
-            for (const viewport of [{width:1440,height:1000},{width:390,height:844}]) {
+            for (const viewport of viewports) {
               const context = await browser.newContext({viewport, serviceWorkers:'block', reducedMotion:'reduce'});
               const page = await context.newPage();
               for (const id of ['', ...packages.map(p => p.id)]) {
                 const errors = [];
+                const row = {id, viewport, errors};
                 const onError = error => errors.push(String(error));
                 page.on('pageerror', onError);
                 try {
                   await page.goto(base + (id ? '/?package=' + encodeURIComponent(id) : '/'), {waitUntil:'domcontentloaded', timeout:30000});
-                  await page.waitForSelector('h1', {timeout:15000});
-                  await page.waitForTimeout(1000);
-                  const name = `${viewport.width}-${id || 'landing'}.png`;
-                  await page.screenshot({path:'review/' + name, fullPage:true});
-                  const metrics = await page.evaluate(() => ({overflow:document.documentElement.scrollWidth > innerWidth + 2, brokenImages:[...document.images].filter(i => !i.complete || i.naturalWidth === 0).map(i => i.src), title:document.querySelector('h1')?.textContent, buttons:[...document.querySelectorAll('button')].map(b => b.textContent?.trim())}));
-                  report.views.push({id, viewport, screenshot:name, errors, ...metrics});
-                } catch (error) { report.views.push({id,viewport,errors:[...errors,String(error)]}); }
-                page.off('pageerror', onError);
+                  await page.waitForSelector('main[data-storyforge-state]', {timeout:15000});
+                  row.state = await readState(page);
+                  assertViewIdentity({packageId:id,worldId:report.worldId}, row.state);
+                  // Full-page evidence includes lazy imagery: bring each actual image into view.
+                  for (const image of await page.locator('img').all()) await image.scrollIntoViewIfNeeded();
+                  await page.waitForFunction(() => [...document.images].every(image => image.complete), undefined, {timeout:15000});
+                  await page.evaluate(async () => { await document.fonts.ready; window.scrollTo(0,0); });
+                  row.state = await readState(page);
+                  assertViewIdentity({packageId:id,worldId:report.worldId}, row.state);
+                } catch (error) { errors.push(String(error)); }
+                finally {
+                  try {
+                    row.state = await readState(page);
+                    Object.assign(row, await page.evaluate(() => ({overflow:document.documentElement.scrollWidth > innerWidth + 2, brokenImages:[...document.images].filter(i => !i.complete || i.naturalWidth === 0).map(i => i.src), title:document.querySelector('h1')?.textContent, buttons:[...document.querySelectorAll('button')].map(b => b.textContent?.trim())})));
+                    const name = `${viewport.width}-${id ? 'package-' + encodeURIComponent(id) : 'landing'}.png`;
+                    await page.screenshot({path:'review/' + name, fullPage:true});
+                    row.screenshot = name;
+                  } catch (error) { errors.push('Diagnostic capture failed: ' + String(error)); }
+                  report.views.push(row);
+                  page.off('pageerror', onError);
+                }
               }
               await context.close();
             }
-          } finally { await browser.close(); }
-          await fs.writeFile('review/report.json', JSON.stringify(report, null, 2));
-          console.log(JSON.stringify({packages:report.packages, media:media.map(({packageId,id,status}) => ({packageId,id,status})), views:report.views.map(({id,viewport,overflow,brokenImages,errors}) => ({id,width:viewport.width,overflow,brokenImages,errors}))},null,2));
+          } finally {
+            await browser.close();
+            try { report.releaseAfter = await readRelease(); }
+            catch (error) { report.releaseError = String(error); }
+            // Persist diagnostics first; then fail on any missing/wrong state or technical defect.
+            await saveReviewReport(report, fs.writeFile);
+          }
+          }
+          try { await inspect(); }
+          catch (error) {
+            await fs.writeFile('review/failure.txt', String(error.stack || error) + '\n');
+            throw error;
+          }
           NODE
       - uses: actions/upload-artifact@v4
         if: always()

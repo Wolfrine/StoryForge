@@ -1,4 +1,5 @@
 import type { StoryPackage, StoryWorldManifest } from '../domain/story';
+import type { ContentSource } from '../content/repository';
 import { usePackageTelemetry } from '../analytics/usePackageTelemetry';
 import { BlockRenderer } from '../engine/BlockRenderer';
 import { composePackage } from '../engine/composition';
@@ -7,6 +8,7 @@ import { mergeTheme, themeToStyle } from '../engine/themeRuntime';
 interface Props {
   world: StoryWorldManifest;
   pkg: StoryPackage;
+  contentSource: ContentSource;
   onBack: () => void;
   onOpenPackage: (id: string) => void;
 }
@@ -14,6 +16,7 @@ interface Props {
 export function PackageExperience({
   world,
   pkg,
+  contentSource,
   onBack,
   onOpenPackage
 }: Props) {
@@ -23,7 +26,14 @@ export function PackageExperience({
   usePackageTelemetry(pkg);
 
   return (
-    <main className="sf-experience" style={themeToStyle(theme)}>
+    <main
+      className="sf-experience"
+      style={themeToStyle(theme)}
+      data-storyforge-state="package"
+      data-package-id={pkg.id}
+      data-world-id={world.id}
+      data-content-source={contentSource}
+    >
       <header className="sf-experience-chrome">
         <button type="button" onClick={onBack}>
           ← {world.title}
