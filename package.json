@@ -3,6 +3,9 @@
   "version": "1.2.0-alpha.1",
   "private": true,
   "type": "module",
+  "overrides": {
+    "baseline-browser-mapping": "2.11.26"
+  },
   "scripts": {
     "dev": "npm run compile:world && vite",
     "compile:world": "node scripts/compile-world.mjs",
