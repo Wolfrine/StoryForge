@@ -43,7 +43,13 @@ export function WorldLanding({
   }, [world.id, contentSource]);
 
   return (
-    <main className="sf-landing" style={style}>
+    <main
+      className="sf-landing"
+      style={style}
+      data-storyforge-state="landing"
+      data-world-id={world.id}
+      data-content-source={contentSource}
+    >
       <div className="sf-landing-ambient" aria-hidden="true">
         <i />
         <i />

@@ -31,9 +31,17 @@ jobs:
 
       - name: Validate and build
         run: |
+          node --test scripts/visual-review-evidence.test.mjs
           npm run build
           test -f dist/manifest.webmanifest
           test -f dist/sw.js
+
+      - name: Record the deployed source revision
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs/promises';
+          await fs.writeFile('dist/storyforge-release.json', JSON.stringify({commit: process.env.GITHUB_SHA}) + '\n');
+          NODE
 
       - name: Prepare Firebase credentials
         env:

@@ -86,6 +86,7 @@ function App() {
     <PackageExperience
       world={world}
       pkg={activePackage}
+      contentSource={contentSource}
       onBack={() => {
         track('return_to_world', {
           package_id: activePackage.id,

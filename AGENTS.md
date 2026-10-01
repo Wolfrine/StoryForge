@@ -2,6 +2,12 @@
 
 StoryForge is a visualization engine. It is not a content author and it is not a collection of hand-designed story pages.
 
+## Shared design entry point
+
+Before UI, UX, layout, styling, motion or visual-quality work, read `Wolfrine/Central/design/README.md`, `UI_AGENT_PROTOCOL.md`, `EXECUTION_ROUTING.md` and `DESIGN_REVIEW_LOOP.md`, then the nearest local design contract and the harness files below. For design creation/change, assign separate designer and critic agents, verify both loaded the guidance, and follow the current Central evidence and acceptance requirements. Keep the owner’s rejection authoritative; a technical verification result is not design acceptance.
+
+The post-deployment visual workflow checks rendered state identity and technical defects. It does not provide independent aesthetic review or block an already completed deployment. Deterministic review instrumentation and policy maintenance do not require manufacturing cosmetic design cycles.
+
 
 ## Harness routing
 
